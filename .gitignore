@@ -1,0 +1,8 @@
+# Ignorar dependencias de PHP
+/app/vendor/
+
+# Ignorar archivos subidos por usuarios por seguridad
+/app/uploads/
+
+# Ignorar archivos ocultos de Windows
+Thumbs.db

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Aeolus</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="body-registro">
+
+    <div id="banner">Únete a AEOLUS</div>
+
+    <form action="registro.php" method="post" class="form-registro">
+        <h2 style="text-align:center; margin-top:0;">Registro</h2>
+
+        <label>Usuario</label>
+        <input type="text" name="usuario" required placeholder="Elige un usuario">
+
+        <label>Correo Electrónico</label>
+        <input type="email" name="email" required placeholder="Tu correo electrónico">
+        <label>Nombre Completo</label>
+        <input type="text" name="nombre" required placeholder="Tu nombre">
+
+        <label>Contraseña</label>
+        <input type="password" name="clave" required placeholder="Crea una contraseña">
+
+        <input type="submit" value="Registrarse">
+
+        <div style="text-align:center; margin-top:15px;">
+            <a href="./index.html">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </form>
+</body>
+</html>

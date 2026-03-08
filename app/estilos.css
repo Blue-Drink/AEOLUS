@@ -1,0 +1,200 @@
+/* --- Variables y Reset --- */
+:root {
+    --primary: #4F46E5;
+    --primary-dark: #3730a3;
+    --secondary: #10b981;
+    --danger: #ef4444;
+    --bg-body: #f3f4f6;
+    --bg-white: #ffffff;
+    --text-main: #1f2937;
+    --text-light: #6b7280;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+}
+
+/* --- Estilos para Login y Registro (Centrado) --- */
+.body-login, .body-registro {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#banner {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-container img {
+    width: 130px;        /* Tamaño fijo controlado */
+    height: auto;        /* Mantiene proporción */
+    display: block;
+    margin: 0 auto 1.5rem auto; /* Centrado y separado del formulario */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+/* --- Ajuste del Footer (Más pequeño y elegante) --- */
+.footer-login {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    
+    /* ESTILOS DE TEXTO CORREGIDOS */
+    color: rgba(255, 255, 255, 0.6); /* Blanco semitransparente (sutil) */
+    font-size: 11px;                 /* Letra pequeña estilo firma */
+    font-family: sans-serif;
+    letter-spacing: 1px;             /* Separación entre letras para elegancia */
+    pointer-events: none;            /* Para que no interfiera con clics */
+}
+
+/* Agregamos padding al body para que el formulario nunca toque el footer en pantallas bajas */
+.body-login {
+    padding-bottom: 40px; 
+}
+
+.form-login, .form-registro {
+    background: var(--bg-white);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 350px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+input[type="text"], input[type="password"], input[type="email"], textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+input[type="submit"] {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--primary-dark);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* --- Estilos para Dashboard (leer.php) --- */
+.body-leer {
+    padding: 2rem;
+}
+
+.header-container {
+    background: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.logout-btn {
+    background-color: var(--danger);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+}
+
+.logout-btn:hover { background-color: #dc2626; }
+
+.tabla-leer {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border-collapse: collapse;
+}
+
+.tabla-leer th {
+    background-color: #f8fafc;
+    text-align: left;
+    padding: 15px;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.tabla-leer td {
+    padding: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tabla-leer tr:hover { background-color: #f9fafb; }
+
+.btn-accion {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 5px;
+}
+.btn-borrar { background-color: #fee2e2; color: var(--danger); }
+.btn-descargar { background-color: #e0e7ff; color: var(--primary); }
+
+/* --- Subir Archivo --- */
+.body-subir {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.file-upload-wrapper {
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
