@@ -1,20 +1,28 @@
-// Verificamos que el script carga
-console.log("El archivo JS se ha cargado correctamente");
-
 document.addEventListener('DOMContentLoaded', function() {
-    const togglePassword = document.querySelector('#togglePassword');
-    const passwordInput = document.querySelector('#clave');
+    
+    // Función genérica para alternar visibilidad
+    function setupPasswordToggle(buttonId, inputId) {
+        const toggleBtn = document.querySelector(buttonId);
+        const inputField = document.querySelector(inputId);
 
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', function () {
-            // Verificamos que el clic funciona
-            console.log("Clic detectado");
-            
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '🕶️';
-        });
-    } else {
-        console.error("No se encontró el input o el icono. Revisa los IDs en tu HTML.");
+        if (toggleBtn && inputField) {
+            toggleBtn.addEventListener('click', function() {
+                const isPassword = inputField.getAttribute('type') === 'password';
+                
+                // Cambiar tipo de input
+                inputField.setAttribute('type', isPassword ? 'text' : 'password');
+                
+                // Cambiar el icono/texto
+                this.textContent = isPassword ? '🕶️' : '👁️';
+                
+                console.log(`Cambiado estado de ${inputId}`);
+            });
+        } else {
+            console.error(`No se encontró el botón ${buttonId} o el input ${inputId}`);
+        }
     }
+
+    // Aplicamos la lógica a ambos pares de IDs
+    setupPasswordToggle('#togglePassword', '#clave');
+    setupPasswordToggle('#togglePasswordConfirmation', '#confirmar_clave');
 });
