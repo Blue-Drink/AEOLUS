@@ -9,13 +9,18 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
 // Recibir datos del formulario
-$u = $_POST['usuario'];
-$email = $_POST['email'];
-$n = $_POST['nombre'];
-$c = $_POST['clave'];
+$aeolus_user = $_POST['usuario'];
+$aeolus_email = $_POST['aeolus_email'];
+$aeolus_name = $_POST['nombre'];
+$aeolus_clave = $_POST['clave'];
+$aeolus_clave_confirm = $_POST['confirmar_clave'];
+
+if ($aeolus_clave !== $aeolus_clave_confirm){
+    die("Error: Las contraseñas no coinciden. Vuelve a intentarlo.");
+}
 
 // Encriptar clave y generar token seguro de 64 caracteres
-$clave_segura = password_hash($c, PASSWORD_DEFAULT);
+$clave_segura = password_hash($aeolus_clave, PASSWORD_DEFAULT);
 $token = bin2hex(random_bytes(32)); 
 
 // Conexión a Aeolus Cloud
@@ -29,9 +34,9 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// 1. Verificar si el usuario o el email ya existen
-$check = $conexion->prepare("SELECT usuario FROM usuario WHERE usuario=? OR email=?");
-$check->bind_param("ss", $u, $email);
+// 1. Verificar si el usuario o el aeolus_email ya existen
+$check = $conexion->prepare("SELECT usuario FROM usuario WHERE usuario=? OR aeolus_email=?");
+$check->bind_param("ss", $aeolus_user, $aeolus_email);
 $check->execute();
 
 if($check->get_result()->num_rows > 0){
@@ -40,13 +45,13 @@ if($check->get_result()->num_rows > 0){
 }
 
 // 2. Insertar el nuevo usuario con verificado = 0
-$stmt = $conexion->prepare("INSERT INTO usuario (usuario, email, clave, nombre, verificado, token) VALUES (?, ?, ?, ?, 0, ?)");
-$stmt->bind_param("sssss", $u, $email, $clave_segura, $n, $token);
+$stmt = $conexion->prepare("INSERT INTO usuario (usuario, aeolus_email, clave, nombre, verificado, token) VALUES (?, ?, ?, ?, 0, ?)");
+$stmt->bind_param("sssss", $aeolus_user, $aeolus_email, $clave_segura, $aeolus_name, $token);
 
 if ($stmt->execute()) {
 
     // 3. Crear su carpeta personal
-    $ruta = "uploads/" . $u;
+    $ruta = "uploads/" . $aeolus_user;
     if (!file_exists($ruta)) {
         mkdir($ruta, 0775, true);
     }
@@ -63,7 +68,7 @@ if ($stmt->execute()) {
         $mail->Port       = 587;
 
         $mail->setFrom('pablojoseporras23@gmail.com', 'Aeolus Cloud'); // <--- CAMBIA ESTO
-        $mail->addAddress($email, $n);
+        $mail->addAddress($aeolus_email, $aeolus_name);
 
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8'; // Para que funcionen las tildes
@@ -73,7 +78,7 @@ if ($stmt->execute()) {
         $enlace = "http://10.10.20.62/verificar.php?token=" . $token;
         
         $mail->Body = "
-            <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>
+            <h2>¡Bienvenido a Aeolus Cloud, $aeolus_name!</h2>
             <p>Gracias por registrarte. Para poder iniciar sesión, necesitas verificar tu correo electrónico haciendo clic en el siguiente enlace:</p>
             <br>
             <a href='$enlace' style='background-color: #4F46E5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;'>Verificar mi cuenta</a>
