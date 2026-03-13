@@ -21,13 +21,18 @@
         <input type="text" name="nombre" required placeholder="Tu nombre">
 
         <label>Contraseña</label>
-        <input type="password" name="clave" required placeholder="Crea una contraseña">
-
+        <div class="password-wrapper">
+            <input type="password" id="clave" name="clave" required placeholder="Crea una contraseña">
+            <span id="togglePassword" class="toggle-icon">👁️</span>
+        </div>
+        
         <input type="submit" value="Registrarse">
 
         <div style="text-align:center; margin-top:15px;">
             <a href="./index.html">¿Ya tienes cuenta? Inicia sesión</a>
         </div>
     </form>
+
+    <script src="togglePassword.js" defer></script>
 </body>
 </html>

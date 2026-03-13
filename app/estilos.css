@@ -102,6 +102,21 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 38%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+
 input[type="submit"] {
     background-color: var(--primary);
     color: white;
