@@ -3,14 +3,14 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Cargar la librería PHPMailer que acabamos de instalar
+// Cargar la librería PHPMailer
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
 // Recibir datos del formulario
 $u = $_POST['usuario'];
-$aeolus_email = $_POST['aeolus_email'];
+$email = $_POST['email']; 
 $n = $_POST['nombre'];
 $c = $_POST['clave'];
 
@@ -18,7 +18,7 @@ $c = $_POST['clave'];
 $clave_segura = password_hash($c, PASSWORD_DEFAULT);
 $token = bin2hex(random_bytes(32)); 
 
-// Conexión a Aeolus Cloud
+// Conexión a Aeolus Cloud (Credenciales locales de XAMPP)
 $host = "localhost";
 $usuario = "admin";
 $contrasena = "123456";
@@ -29,9 +29,9 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
-// 1. Verificar si el usuario o el aeolus_email ya existen
-$check = $conexion->prepare("SELECT usuario FROM usuario WHERE usuario=? OR aeolus_email=?");
-$check->bind_param("ss", $u, $aeolus_email);
+// 1. Verificar si el usuario o el email ya existen
+$check = $conexion->prepare("SELECT usuario FROM usuario WHERE usuario=? OR email=?"); 
+$check->bind_param("ss", $u, $email); 
 $check->execute();
 
 if($check->get_result()->num_rows > 0){
@@ -40,8 +40,8 @@ if($check->get_result()->num_rows > 0){
 }
 
 // 2. Insertar el nuevo usuario con verificado = 0
-$stmt = $conexion->prepare("INSERT INTO usuario (usuario, aeolus_email, clave, nombre, verificado, token) VALUES (?, ?, ?, ?, 0, ?)");
-$stmt->bind_param("sssss", $u, $aeolus_email, $clave_segura, $n, $token);
+$stmt = $conexion->prepare("INSERT INTO usuario (usuario, email, clave, nombre, verificado, token) VALUES (?, ?, ?, ?, 0, ?)"); 
+$stmt->bind_param("sssss", $u, $email, $clave_segura, $n, $token); 
 
 if ($stmt->execute()) {
 
@@ -57,20 +57,21 @@ if ($stmt->execute()) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'pablojoseporras23@gmail.com'; // <--- CAMBIA ESTO
-        $mail->Password   = 'ojgmlkondkpjwgba'; // <--- CAMBIA ESTO
+        $mail->Username   = 'pablojoseporras23@gmail.com'; 
+        $mail->Password   = 'ojgmlkondkpjwgba'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('pablojoseporras23@gmail.com', 'Aeolus Cloud'); // <--- CAMBIA ESTO
-        $mail->addAddress($aeolus_email, $n);
+        $mail->setFrom('pablojoseporras23@gmail.com', 'Aeolus Cloud'); 
+        $mail->addAddress($email, $n); 
 
         $mail->isHTML(true);
-        $mail->CharSet = 'UTF-8'; // Para que funcionen las tildes
+        $mail->CharSet = 'UTF-8'; 
         $mail->Subject = 'Verifica tu cuenta en Aeolus Cloud';
         
-        // El enlace que se enviará al usuario (usando tu IP de Debian)
-        $enlace = "http://10.10.20.62/verificar.php?token=" . $token;
+        // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
+        // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
+        $enlace = "http://localhost:8080/AEOLUS/app/verificar.php?token=" . $token;
         
         $mail->Body = "
             <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>
@@ -82,7 +83,35 @@ if ($stmt->execute()) {
         ";
 
         $mail->send();
-        echo "<script>alert('¡Registro exitoso! Revisa tu correo electrónico para verificar la cuenta.'); window.location='index.html';</script>";
+        
+        // --- INICIO DE LA NUEVA PANTALLA DE ÉXITO PREMIUM ---
+        echo "<!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Registro Exitoso - Aeolus Cloud</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f3f4f6; margin: 0; }
+                .tarjeta { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 450px; }
+                .icono { font-size: 70px; margin-bottom: 10px; }
+                h2 { color: #1f2937; margin-bottom: 10px; }
+                p { color: #4b5563; line-height: 1.5; }
+                .boton { display: inline-block; margin-top: 25px; padding: 12px 24px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; transition: background 0.3s; }
+                .boton:hover { background-color: #4338ca; }
+            </style>
+        </head>
+        <body>
+            <div class='tarjeta'>
+                <div class='icono'>✉️✅</div>
+                <h2>¡Casi listo, $n!</h2>
+                <p>Tu cuenta ha sido creada con éxito en Aeolus Cloud.</p>
+                <p>Para proteger tu seguridad, te hemos enviado un enlace de verificación a <strong>$email</strong>. Por favor, revisa tu bandeja de entrada (o la carpeta de Spam) para activarla.</p>
+                <a href='index.html' class='boton'>Volver al inicio</a>
+            </div>
+        </body>
+        </html>";
+        // --- FIN DE LA NUEVA PANTALLA DE ÉXITO PREMIUM ---
+
     } catch (Exception $e) {
         echo "Error al enviar el correo: {$mail->ErrorInfo}";
     }
@@ -92,5 +121,5 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
-$conexion->close();
+$conexion->close(); 
 ?>

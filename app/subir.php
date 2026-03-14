@@ -1,25 +1,37 @@
 <?php
-//comienza la sesion 
 session_start();
 if (!isset($_SESSION['usuario'])) { header("Location: index.html"); exit(); }
 
-//Lee el subdirectorio donde se quiere guardar el archivo
 $base = "uploads/" . $_SESSION['usuario'] . "/";
 $dir_req = isset($_POST['directorio_destino']) ? trim(str_replace('..', '', $_POST['directorio_destino']), '/\\') : '';
-//Contruye la ruta  final
 $target_dir = $base . $dir_req;
 
-// Asegurar carpeta
 if (!file_exists($target_dir)) $target_dir = $base;
 else $target_dir .= "/";
-// Verifica si se ha subido un archivo sin errores
+
 if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
     $nombre = basename($_FILES['archivo']['name']);
-    // Limpiar nombre para evitar problemas
     $nombre = preg_replace("/[^a-zA-Z0-9\._-]/", "_", $nombre);
     
-    if (move_uploaded_file($_FILES['archivo']['tmp_name'], $target_dir . $nombre)) {
-        // Éxito: volvemos a leer.php
+    // --- INICIO DEL FILTRO DE SEGURIDAD RECUPERADO ---
+    $tmp_name = $_FILES['archivo']['tmp_name'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_real = finfo_file($finfo, $tmp_name);
+    finfo_close($finfo);
+    
+    // Lista blanca de formatos (puedes añadir más si tu equipo lo necesita)
+    $formatos_permitidos = [
+        'image/jpeg', 'image/png', 'application/pdf', 
+        'video/mp4', 'text/plain'
+    ];
+    
+    if (!in_array($mime_real, $formatos_permitidos)) {
+        echo "<script>alert('Error de seguridad: Formato de archivo no permitido ($mime_real).'); window.history.back();</script>";
+        exit();
+    }
+    // --- FIN DEL FILTRO ---
+
+    if (move_uploaded_file($tmp_name, $target_dir . $nombre)) {
         header("Location: leer.php?dir=" . urlencode($dir_req));
         exit();
     } else {

@@ -15,6 +15,8 @@ if (isset($_POST['nuevo_nombre']) && isset($_POST['archivo_original'])) {
     $orig = $current_path . '/' . basename($_POST['archivo_original']);
     $dest = $current_path . '/' . basename($_POST['nuevo_nombre']);
     if (file_exists($orig)) rename($orig, $dest);
+    
+    $_SESSION['mensaje'] = "Archivo renombrado con éxito."; // Añadimos mensaje aquí también
     header("Location: leer.php?dir=" . urlencode($req));
     exit;
 }
@@ -23,6 +25,8 @@ if (isset($_POST['nuevo_nombre']) && isset($_POST['archivo_original'])) {
 if (isset($_POST['nueva_carpeta'])) {
     $d = basename($_POST['nueva_carpeta']);
     if(!empty($d)) @mkdir($current_path . '/' . $d, 0777);
+    
+    $_SESSION['mensaje'] = "Carpeta '$d' creada."; // Y aquí
     header("Location: leer.php?dir=" . urlencode($req));
     exit;
 }
@@ -46,6 +50,19 @@ if (isset($_POST['nueva_carpeta'])) {
     <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
 </div>
 
+<?php if (isset($_SESSION['mensaje'])): ?>
+    <div style="background-color: #d1fae5; color: #065f46; padding: 15px; margin-bottom: 20px; border-radius: 6px; border-left: 5px solid #10b981;">
+        ✅ <?php echo $_SESSION['mensaje']; ?>
+    </div>
+    <?php unset($_SESSION['mensaje']); // Lo borramos para que no salga siempre ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error'])): ?>
+    <div style="background-color: #fee2e2; color: #991b1b; padding: 15px; margin-bottom: 20px; border-radius: 6px; border-left: 5px solid #ef4444;">
+        ❌ <?php echo $_SESSION['error']; ?>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
     <form action="" method="post" style="display:flex; gap:10px;">
         <input type="text" name="nueva_carpeta" placeholder="Nueva Carpeta..." style="margin:0; padding:8px;">
@@ -112,7 +129,7 @@ if (isset($_POST['nueva_carpeta'])) {
             // Enlace a borrar.php
             echo "<a href='borrar.php?eliminar=".urlencode($f)."&dir=".urlencode($req)."' 
                      class='btn-accion btn-borrar' 
-                     onclick=\"return confirm('¿Borrar $f?');\">🗑️ Borrar</a>";
+                     onclick=\"return confirm('¿Seguro que quieres borrar $f?');\">🗑️ Borrar</a>";
             echo "</td>";
             echo "</tr>";
         }
