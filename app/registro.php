@@ -20,8 +20,10 @@ $token = bin2hex(random_bytes(32));
 
 // Conexión a Aeolus Cloud (Credenciales locales de XAMPP)
 $host = "localhost";
-$usuario = "admin";
-$contrasena = "123456";
+//$usuario = "admin"; // conexion clase
+//$contrasena = "123456"; conexion clase
+$usuario = "root"; // conexion desde casa
+$contrasena = ""; // conexion desde casa
 $base_datos = "Aeolus_Cloud";
 
 $conexion = new mysqli($host, $usuario, $contrasena, $base_datos);

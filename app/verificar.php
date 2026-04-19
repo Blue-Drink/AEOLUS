@@ -1,6 +1,6 @@
 <?php
-$conexion = new mysqli("localhost", "admin", "123456", "Aeolus_Cloud");
-
+//$conexion = new mysqli("localhost", "admin", "123456", "Aeolus_Cloud"); //conexion clase
+$conexion = new mysqli("localhost", "root", "", "Aeolus_Cloud"); //conexion  desde casa
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
     
