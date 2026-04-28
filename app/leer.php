@@ -47,7 +47,15 @@ if (isset($_POST['nueva_carpeta'])) {
         <h2>Hola, <?php echo htmlspecialchars($_SESSION['usuario']); ?></h2>
         <small>Ruta: /<?php echo htmlspecialchars($req); ?></small>
     </div>
-    <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
+    
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <a href="logout.php" class="logout-btn" style="width: 145px; background-color: #dc3545; color: white; padding: 6px 0; border-radius: 4px; border: 1px solid #dc3545; text-decoration: none; text-align: center; font-size: 0.9em; box-sizing: border-box;">
+            Cerrar Sesión
+        </a>
+        <button onclick="abrirModalBorrado()" style="width: 145px; background-color: white; color: #dc3545; border: 1px solid #dc3545; padding: 6px 0; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-align: center; box-sizing: border-box; transition: all 0.3s ease;">
+            ¿Eliminar cuenta?
+        </button>
+    </div>
 </div>
 
 <?php if (isset($_SESSION['mensaje'])): ?>
