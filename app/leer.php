@@ -49,10 +49,16 @@ if (isset($_POST['nueva_carpeta'])) {
     </div>
     
     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-        <a href="logout.php" class="logout-btn" style="width: 145px; background-color: #dc3545; color: white; padding: 6px 0; border-radius: 4px; border: 1px solid #dc3545; text-decoration: none; text-align: center; font-size: 0.9em; box-sizing: border-box;">
-            Cerrar Sesión
+        <a href="logout.php" class="logout-btn" style="width: 145px; 
+           background-color: #dc3545; color: white; padding: 6px 0; 
+           border-radius: 4px; border: 1px solid #dc3545; text-decoration: none; 
+           text-align: center; font-size: 0.9em; box-sizing: border-box;">
+        Cerrar Sesión
         </a>
-        <button onclick="abrirModalBorrado()" style="width: 145px; background-color: white; color: #dc3545; border: 1px solid #dc3545; padding: 6px 0; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-align: center; box-sizing: border-box; transition: all 0.3s ease;">
+        <button onclick="abrirModalBorrado()" style="width: 145px; background-color: white; 
+                color: #dc3545; border: 1px solid #dc3545; padding: 6px 0; border-radius: 4px; 
+                cursor: pointer; font-size: 0.85em; font-weight: bold; text-align: center; 
+                box-sizing: border-box; transition: all 0.3s ease;">
             ¿Eliminar cuenta?
         </button>
     </div>
@@ -144,6 +150,61 @@ if (isset($_POST['nueva_carpeta'])) {
         ?>
     </tbody>
 </table>
+
+    <div id="modalBorrado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: white; padding: 30px; border-radius: 8px; max-width: 450px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            
+            <h2 style="color: #dc3545; margin-top: 0;">🚨 Acción Irreversible</h2>
+            <p>Estás a punto de eliminar tu cuenta y <strong>TODOS</strong> tus archivos físicos de la nube. Esta acción no se puede deshacer.</p>
+            
+            <p style="margin-bottom: 20px;">Para confirmar, escribe tu nombre de usuario (<strong><?php echo $_SESSION['usuario']; ?></strong>) a continuación:</p>
+            
+            <form action="borrar_cuenta.php" method="POST">
+                <input type="text" id="inputConfirmacion" placeholder="Escribe tu usuario aquí" onkeyup="validarBorrado('<?php echo $_SESSION['usuario']; ?>')" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="button" onclick="cerrarModalBorrado()" style="padding: 10px 20px; border: none; background: #6c757d; color: white; border-radius: 4px; cursor: pointer;">
+                        Cancelar
+                    </button>
+                    
+                    <button type="submit" id="btnBorrarReal" disabled style="padding: 10px 20px; border: none; background: #dc3545; color: white; border-radius: 4px; cursor: not-allowed; opacity: 0.5;">
+                        Eliminar Definitivamente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Esta es la función que llama al botón de Eliminar Cuenta. 
+        // Cambia el 'display' a 'flex' para que se vea.
+        function abrirModalBorrado() {
+            document.getElementById('modalBorrado').style.display = 'flex';
+        }
+
+        // Esta función cierra la ventana y borra lo que hubieras escrito
+        function cerrarModalBorrado() {
+            document.getElementById('modalBorrado').style.display = 'none';
+            document.getElementById('inputConfirmacion').value = ''; 
+            validarBorrado('<?php echo $_SESSION['usuario']; ?>'); 
+        }
+
+        // Esta función comprueba que escribas bien tu usuario para desbloquear el botón rojo
+        function validarBorrado(usuarioCorrecto) {
+            const inputTexto = document.getElementById('inputConfirmacion').value;
+            const botonBorrar = document.getElementById('btnBorrarReal');
+            
+            if (inputTexto === usuarioCorrecto) {
+                botonBorrar.disabled = false;
+                botonBorrar.style.cursor = 'pointer';
+                botonBorrar.style.opacity = '1';
+            } else {
+                botonBorrar.disabled = true;
+                botonBorrar.style.cursor = 'not-allowed';
+                botonBorrar.style.opacity = '0.5';
+            }
+        }
+    </script>
 
 </body>
 </html>
