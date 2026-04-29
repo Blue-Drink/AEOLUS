@@ -17,16 +17,16 @@ if ($conexion->connect_error) {
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
-    $token = $_GET['token'];
+    $token = trim($_GET['token']);
 
-    // Verificar token
-    $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=?");
+    // Verificar token y expiración
+    $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > NOW()");
     $stmt->bind_param("s", $token);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows == 0) {
-        $message = "Token inválido o expirado.";
+        $message = "Token inválido, expirado o ya utilizado.";
     } else {
         // Mostrar formulario
         ?>
@@ -75,15 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
         exit();
     }
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['token'])) {
-    $token = $_POST['token'];
+    $token = trim($_POST['token']);
     $clave = $_POST['clave'];
     $confirmar = $_POST['confirmar'];
 
-    if ($clave !== $confirmar) {
+    if (strlen($clave) < 8) {
+        $message = "La contraseña debe tener al menos 8 caracteres.";
+    } elseif ($clave !== $confirmar) {
         $message = "Las contraseñas no coinciden.";
     } else {
-        // Verificar token y actualizar
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=?");
+        // Verificar token y expiración
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > NOW()");
         $stmt->bind_param("s", $token);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -94,10 +96,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
 
             $clave_segura = password_hash($clave, PASSWORD_DEFAULT);
 
-            $update = $conexion->prepare("UPDATE usuario SET clave=?, token=NULL WHERE id_usuario=?");
+            $update = $conexion->prepare("UPDATE usuario SET clave=?, token=NULL, token_expiracion=NULL WHERE id_usuario=?");
             $update->bind_param("si", $clave_segura, $id_usuario);
 
             if ($update->execute()) {
+                error_log("Contraseña restablecida para usuario $id_usuario");
+                $message = "Contraseña restablecida exitosamente. <a href='index.html'>Iniciar sesión</a>";
+            } else {
+                error_log("Error al restablecer contraseña para usuario $id_usuario: " . $conexion->error);
+                $message = "Error al restablecer la contraseña.";
+            }
+        } else {
+            $message = "Token inválido, expirado o ya utilizado.";
+        }
+    }
                 $message = "Contraseña restablecida exitosamente. <a href='index.html'>Iniciar sesión</a>";
             } else {
                 $message = "Error al restablecer la contraseña.";

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   verificado TINYINT(1) DEFAULT 0,
   token VARCHAR(64) DEFAULT NULL,
+  token_expiracion TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (id_usuario),
   UNIQUE KEY (usuario),
   UNIQUE KEY (email)

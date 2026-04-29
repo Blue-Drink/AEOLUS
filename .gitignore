@@ -6,3 +6,5 @@
 
 # Ignorar archivos ocultos de Windows
 Thumbs.db
+# Ignorar archivos de configuración sensibles
+.env
