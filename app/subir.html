@@ -11,16 +11,17 @@
         <h2 style="margin-top:0;">Subir a la nube</h2>
         <p>Selecciona el archivo que deseas guardar</p>
         
-        <form action="subir.php" method="post" enctype="multipart/form-data">
-            <input type="file" name="archivo" required style="border: 2px dashed #ccc; padding: 20px; width: 100%;">
+        <form action="subir.php" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            
+            <div style="border: 2px dashed #4F46E5; background-color: #f8fafc; padding: 30px 20px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 8px; cursor: pointer;">
+                <input type="file" name="archivo" required style="width: 100%; cursor: pointer;">
+            </div>
             
             <input type="hidden" name="directorio_destino" id="dir_input">
             
-            <br><br>
-            <input type="submit" value="Comenzar Subida">
+            <input type="submit" value="Comenzar Subida" style="width: 100%; padding: 12px; background-color: #4F46E5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.3s;">
             
-            <br>
-            <a href="javascript:history.back()">Cancelar y Volver</a>
+            <a href="javascript:history.back()" style="color: #64748b; text-decoration: none; font-size: 0.9em; margin-top: 5px;">Cancelar y Volver</a>
         </form>
     </div>
 
