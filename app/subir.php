@@ -36,9 +36,8 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
     
     // ==============================================================================
     // Contracomprobación Cruzada Mime/Extensión
-    // No basta con que el MIME esté en la lista general. Debe coincidir con lo que dice el usuario.
 
-// Mapa estricto que relaciona la identidad real (MIME) con sus extensiones seguras
+    // Mapa estricto que relaciona la identidad real (MIME) con sus extensiones seguras
     $mapa_extensiones_seguras = [
         // --- Imágenes ---
         'image/jpeg'      => ['jpg', 'jpeg'],
@@ -63,7 +62,8 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
 
         // --- Documentos de Texto y Lectura ---
         'application/pdf' => ['pdf'],
-        'text/plain'      => ['txt'],
+        'application/x-pdf' => ['pdf'],
+        'text/plain'      => ['txt', 'csv'],
         'text/csv'        => ['csv'],
 
         // --- Documentos de Office (Word, Excel, PowerPoint) ---
@@ -82,23 +82,17 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
 
     // 1. Comprobamos si el interior del archivo está en nuestra lista segura
     if (!array_key_exists($mime_real, $mapa_extensiones_seguras)) {
-        echo "<script>alert(\"Error de seguridad: El interior del archivo ($mime_real) no esta en la lista blanca de la nube Aeolus.\"); window.history.back();</script>";
+        echo "<script>alert('Error de seguridad: Formato de archivo no permitido ($mime_real).'); window.history.back();</script>";
         exit();
     }
 
     // 2. CONTRACCOMPROBACIÓN: ¿La extensión declarada es válida para ese tipo de archivo?
-    // Tu prueba ('text/plain' vs '.jpg') morirá aquí.
     if (!in_array($extension, $mapa_extensiones_seguras[$mime_real])) {
-        echo "<script>alert(\"Error de seguridad (Incoherencia): El archivo ha sido detectado internamente como [$mime_real] pero la extensión es [$extension]. Esto es sospechoso y ha sido bloqueado.\"); window.history.back();</script>";
+        echo "<script>alert('Error de seguridad (Incoherencia): Detectado como $mime_real pero la extensión es $extension. Archivo bloqueado.'); window.history.back();</script>";
         exit();
     }
     // ==============================================================================
-    
-    // Se comprueba si el interior del archivo coincide con nuestra lista blanca
-    if (!in_array($mime_real, $formatos_permitidos)) {
-        echo "<script>alert('Error de seguridad: Formato de archivo no permitido ($mime_real).'); window.history.back();</script>";
-        exit();
-    }
+
     // --- FIN DEL FILTRO ---
 
     //GUARDADO DEL ARCHIVO
