@@ -3,10 +3,14 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Cargar la librería PHPMailer
+// Cargar la librería PHPMailer y Dotenv
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
+
+// Inicializar la caja fuerte (.env)
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 // Recibir datos del formulario
 $u = $_POST['usuario'];
@@ -18,13 +22,11 @@ $c = $_POST['clave'];
 $clave_segura = password_hash($c, PASSWORD_DEFAULT);
 $token = bin2hex(random_bytes(32)); 
 
-// Conexión a Aeolus Cloud (Credenciales locales de XAMPP)
-$host = "localhost";
-//$usuario = "admin"; // conexion clase
-//$contrasena = "123456"; conexion clase
-$usuario = "root"; // conexion desde casa
-$contrasena = ""; // conexion desde casa
-$base_datos = "Aeolus_Cloud";
+// Conexión a Aeolus Cloud usando variables seguras (.env)
+$host = $_ENV['DB_HOST'];
+$usuario = $_ENV['DB_USER']; 
+$contrasena = $_ENV['DB_PASS']; 
+$base_datos = $_ENV['DB_NAME'];
 
 $conexion = new mysqli($host, $usuario, $contrasena, $base_datos);
 if ($conexion->connect_error) {
@@ -59,12 +61,15 @@ if ($stmt->execute()) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'pablojoseporras23@gmail.com'; 
-        $mail->Password   = 'ojgmlkondkpjwgba'; 
+        
+        // Credenciales inyectadas desde la caja fuerte (.env)
+        $mail->Username   = $_ENV['SMTP_USER']; 
+        $mail->Password   = $_ENV['SMTP_PASS']; 
+        
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('pablojoseporras23@gmail.com', 'Aeolus Cloud'); 
+        $mail->setFrom($_ENV['SMTP_USER'], 'Aeolus Cloud'); 
         $mail->addAddress($email, $n); 
 
         $mail->isHTML(true);
@@ -73,7 +78,7 @@ if ($stmt->execute()) {
         
         // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
         // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-        $enlace = "http://localhost:8080/AEOLUS/app/verificar.php?token=" . $token;
+        $enlace = "http://10.10.20.62/AEOLUS/app/verificar.php?token=" . $token;
         
         $mail->Body = "
             <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>
