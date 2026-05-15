@@ -23,10 +23,20 @@ if (isset($_POST['nuevo_nombre']) && isset($_POST['archivo_original'])) {
 
 // --- LÓGICA CREAR CARPETA ---
 if (isset($_POST['nueva_carpeta'])) {
-    $d = basename($_POST['nueva_carpeta']);
-    if(!empty($d)) @mkdir($current_path . '/' . $d, 0777);
+    $d = trim(basename($_POST['nueva_carpeta']));
     
-    $_SESSION['mensaje'] = "Carpeta '$d' creada."; // Y aquí
+    if (empty($d)) {
+        $_SESSION['error'] = "Introduzca un nombre para la carpeta.";
+    } else {
+        $ruta_destino = $current_path . '/' . $d; // Ojo: asegúrate de que usas tu variable real de la ruta actual
+        
+        if (!file_exists($ruta_destino)) {
+            @mkdir($ruta_destino, 0777);
+            $_SESSION['mensaje'] = "Carpeta '$d' creada.";
+        } else {
+            $_SESSION['error'] = "Ya existe una carpeta con el nombre '$d'.";
+        }
+    }
     header("Location: leer.php?dir=" . urlencode($req));
     exit;
 }
@@ -79,7 +89,7 @@ if (isset($_POST['nueva_carpeta'])) {
 <?php endif; ?>
 <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
     <form action="" method="post" style="display:flex; gap:10px;">
-        <input type="text" name="nueva_carpeta" placeholder="Nueva Carpeta..." style="margin:0; padding:8px;">
+        <input type="text" name="nueva_carpeta" placeholder="Nueva Carpeta..." style="margin:0; padding:8px;" required>
         <input type="submit" value="Crear" style="width:auto; padding:8px 15px;">
     </form>
 
@@ -114,16 +124,22 @@ if (isset($_POST['nueva_carpeta'])) {
         foreach ($files as $f) {
             $full = $current_path . '/' . $f;
             $isDir = is_dir($full);
-            // Enlace para abrir carpeta o #
-            $link = $isDir ? "leer.php?dir=" . urlencode(($req ? $req.'/' : '') . $f) : "#";
+
+            // Si es carpeta, recarga leer.php. Si es archivo, lo envía al portero.
+            $link = $isDir ? "leer.php?dir=" . urlencode(($req ? $req.'/' : '') . $f) : "abrir_archivos.php?file=" . urlencode($f) . "&dir=" . urlencode($req);
+            
+            // Si es un archivo, queremos que intente abrirse en una pestaña nueva de tu navegador (_blank)
+            $target = $isDir ? "" : " target='_blank'";
+            
             $icon = $isDir ? "📁" : "📄";
+
             $size = $isDir ? "-" : round(filesize($full)/1024, 2) . " KB";
 
             echo "<tr>";
             
             // Columna Nombre + Renombrar
             echo "<td>
-                    <a href='$link' style='font-weight:bold; font-size:1.1em;'>$icon $f</a>
+                    <a href='$link'$target style='font-weight:bold; font-size:1.1em; color: #1f2937; text-decoration: none;'>$icon $f</a>
                     <form method='post' style='display:inline-block; margin-left:15px; opacity:0.6;'>
                         <input type='hidden' name='archivo_original' value='$f'>
                         <input type='text' name='nuevo_nombre' placeholder='Renombrar' style='padding:2px; font-size:12px; width:80px; margin:0;'>
