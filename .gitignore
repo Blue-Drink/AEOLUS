@@ -1,3 +1,6 @@
 app/.env
 app/vendor/
 *.log
+
+# Evitar subir archivos personales de los usuarios por seguridad, privacidad y peso del repositorio
+app/uploads/
