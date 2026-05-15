@@ -78,7 +78,7 @@ if ($stmt->execute()) {
         
         // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
         // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-        $enlace = "http://10.10.20.62/AEOLUS/app/verificar.php?token=" . $token;
+        $enlace = "https://debian-aeolus.taildaa0bc.ts.net/AEOLUS/app/verificar.php?token=" . $token;
         
         $mail->Body = "
             <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>

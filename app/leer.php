@@ -1,15 +1,6 @@
 <?php
-//Comprueba si hay sesión activa
 session_start();
-if (!isset($_SESSION['usuario'])) { 
-    header("Location: index.html"); 
-    exit(); 
-}
-
-// Le dice al navegador que no guarde esta página (Anti Caché)
-header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
-header("Pragma: no-cache"); // HTTP 1.0.
-header("Expires: 0"); // Proxies.
+if (!isset($_SESSION['usuario'])) { header("Location: index.html"); exit(); }
 
 $base_path = "uploads/" . $_SESSION['usuario'] . "/";
 // Seguridad en rutas
@@ -92,7 +83,7 @@ if (isset($_POST['nueva_carpeta'])) {
         <input type="submit" value="Crear" style="width:auto; padding:8px 15px;">
     </form>
 
-    <a href="subir_formulario.php?dir=<?php echo urlencode($req); ?>" class="logout-btn" style="background-color: var(--primary); text-decoration:none;">
+    <a href="subir.html?dir=<?php echo urlencode($req); ?>" class="logout-btn" style="background-color: var(--primary); text-decoration:none;">
         <i class="fas fa-cloud-upload-alt"></i> Subir Archivo
     </a>
 </div>
