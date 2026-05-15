@@ -3,15 +3,21 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Conexión a DB
-$host = "localhost";
-$usuario = "root";
-$contrasena = "";
-$base_datos = "Aeolus_Cloud";
+// Cargar la librería Dotenv para leer el .env
+require 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-$conexion = new mysqli($host, $usuario, $contrasena, $base_datos);
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+// Conexión a DB usando variables seguras
+$host = $_ENV['DB_HOST'];
+$usuario = $_ENV['DB_USER'];
+$contrasena = $_ENV['DB_PASS'];
+$base_datos = $_ENV['DB_NAME'];
+
+try {
+    $conexion = new mysqli($host, $usuario, $contrasena, $base_datos);
+} catch (Exception $e) {
+    die("🚨 Error crítico: No me puedo conectar a la base de datos. Verifica el archivo .env.");
 }
 
 $message = '';
@@ -84,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
     } elseif ($clave !== $confirmar) {
         $message = "Las contraseñas no coinciden.";
     } else {
-        // Verificar token y expiración
+        // Verificar token y expiración nuevamente por seguridad
         $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > NOW()");
         $stmt->bind_param("s", $token);
         $stmt->execute();
@@ -108,14 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
             }
         } else {
             $message = "Token inválido, expirado o ya utilizado.";
-        }
-    }
-                $message = "Contraseña restablecida exitosamente. <a href='index.html'>Iniciar sesión</a>";
-            } else {
-                $message = "Error al restablecer la contraseña.";
-            }
-        } else {
-            $message = "Token inválido.";
         }
     }
 } else {
