@@ -4,3 +4,6 @@ app/vendor/
 
 # Evitar subir archivos personales de los usuarios por seguridad, privacidad y peso del repositorio
 app/uploads/
+
+# Ocultar configuraciones y preferencias locales del editor Visual Studio Code
+.vscode/

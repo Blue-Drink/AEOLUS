@@ -197,7 +197,6 @@ if (isset($_POST['nueva_carpeta'])) {
             $dataDestName = $isDir ? $safeNameAttr : '';
             echo "<tr class='item-row' draggable='true' data-name='$safeNameAttr' data-isdir='$isDirAttr' data-destdir='$dataDestDir' data-destname='$dataDestName'>";
             
-            
             // --- Comprobar si lleva la pegatina de compartido ---
             // 1. Calculamos la ruta exacta de este archivo (ej: Hola/DNI.pdf)
             $ruta_relativa_completa = ($req ? $req.'/' : '') . $f;
