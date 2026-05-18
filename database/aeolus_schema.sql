@@ -19,3 +19,15 @@ CREATE TABLE IF NOT EXISTS usuario (
   UNIQUE KEY (usuario),
   UNIQUE KEY (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS archivos_compartidos (
+    id_compartido INT(11) NOT NULL AUTO_INCREMENT,
+    id_propietario INT(11) NOT NULL,
+    id_receptor INT(11) NOT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_relativa VARCHAR(255) NOT NULL,
+    fecha_compartido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_compartido),
+    FOREIGN KEY (id_propietario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_receptor) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

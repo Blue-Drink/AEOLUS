@@ -155,6 +155,24 @@ if (isset($_POST['nueva_carpeta'])) {
                   </tr>";
         }
 
+        // --- Obtener la lista de archivos que compartidos para ponerles la etiqueta ---
+        $mis_archivos_compartidos = [];
+        require_once 'vendor/autoload.php';
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+        $dotenv->safeLoad();
+        $conexion_chivato = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
+        
+        if (!$conexion_chivato->connect_error) {
+            $stmt_chivato = $conexion_chivato->prepare("SELECT ruta_relativa FROM archivos_compartidos WHERE id_propietario = (SELECT id_usuario FROM usuario WHERE usuario = ?)");
+            $stmt_chivato->bind_param("s", $_SESSION['usuario']);
+            $stmt_chivato->execute();
+            $res_chivato = $stmt_chivato->get_result();
+            while($row = $res_chivato->fetch_assoc()) {
+                $mis_archivos_compartidos[] = $row['ruta_relativa'];
+            }
+            $conexion_chivato->close();
+        }
+
         $files = array_diff(scandir($current_path), ['.', '..']);
 
         foreach ($files as $f) {
@@ -178,10 +196,21 @@ if (isset($_POST['nueva_carpeta'])) {
             $dataDestDir = htmlspecialchars($req, ENT_QUOTES);
             $dataDestName = $isDir ? $safeNameAttr : '';
             echo "<tr class='item-row' draggable='true' data-name='$safeNameAttr' data-isdir='$isDirAttr' data-destdir='$dataDestDir' data-destname='$dataDestName'>";
+            
+            // --- Comprobar si lleva la pegatina de compartido ---
+            // 1. Calculamos la ruta exacta de este archivo (ej: Hola/DNI.pdf)
+            $ruta_relativa_completa = ($req ? $req.'/' : '') . $f;
+            $etiqueta_compartido = ""; // Por defecto, no hay pegatina
+            
+            // 2. Si no es una carpeta Y además está en nuestra lista de compartidos, creamos la pegatina
+            if (!$isDir && in_array($ruta_relativa_completa, $mis_archivos_compartidos)) {
+                $etiqueta_compartido = "<span style='font-size: 0.7em; background-color: #10b981; color: white; padding: 2px 6px; border-radius: 10px; margin-left: 8px; vertical-align: middle;'>🔗 Compartido</span>";
+            }
 
-            // Columna Nombre + Renombrar
+            // Columna Nombre + Renombrar + Etiqueta
             echo "<td>
                     <a href='$link'$target style='font-weight:bold; font-size:1.1em; color: #1f2937; text-decoration: none;'>$icon $f</a>
+                    $etiqueta_compartido
                     <form method='post' style='display:inline-block; margin-left:15px; opacity:0.6;'>
                         <input type='hidden' name='archivo_original' value='$f'>
                         <input type='text' name='nuevo_nombre' placeholder='Renombrar' style='padding:2px; font-size:12px; width:80px; margin:0;'>
@@ -197,6 +226,10 @@ if (isset($_POST['nueva_carpeta'])) {
             if (!$isDir) {
                 // Descarga directa
                 echo "<a href='$full' download class='btn-accion btn-descargar'>⬇️ Descargar</a> ";
+
+                // NUEVO: Botón de compartir. Le pasamos el nombre del archivo y la ruta completa (relativa a uploads/)
+                $ruta_relativa_completa = ($req ? $req.'/' : '') . $f;
+                echo "<button onclick=\"abrirModalCompartir('$f', '$ruta_relativa_completa')\" class='btn-accion btn-descargar' style='background-color:#4F46E5; border:none; color:white; cursor:pointer;'>🤝 Compartir</button> ";
             }
             // Enlace a borrar.php
             echo "<a href='borrar.php?eliminar=".urlencode($f)."&dir=".urlencode($req)."'
@@ -208,6 +241,107 @@ if (isset($_POST['nueva_carpeta'])) {
         ?>
     </tbody>
 </table>
+
+<br>
+<h3 style="color: #4F46E5; border-bottom: 2px solid #4F46E5; padding-bottom: 5px; margin-top: 30px;">🤝 Compartidos conmigo</h3>
+<table class="tabla-leer">
+    <thead>
+        <tr>
+            <th>Nombre del Archivo</th>
+            <th>Propietario</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // 1. Conectarnos a la base de datos (usamos require_once por si ya estuviera cargado)
+        require_once 'vendor/autoload.php';
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+        $dotenv->safeLoad();
+        
+        $conexion = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
+        
+        if (!$conexion->connect_error) {
+            // 2. Buscar archivos donde tú eres el receptor
+            $mi_usuario = $_SESSION['usuario'];
+            
+            // Hacemos un JOIN para sacar el nombre del propietario en lugar de su ID
+            $sql = "SELECT ac.nombre_archivo, ac.ruta_relativa, ac.fecha_compartido, prop.usuario AS nombre_propietario 
+                    FROM archivos_compartidos ac 
+                    JOIN usuario rec ON ac.id_receptor = rec.id_usuario 
+                    JOIN usuario prop ON ac.id_propietario = prop.id_usuario 
+                    WHERE rec.usuario = ?";
+                    
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param("s", $mi_usuario);
+            $stmt->execute();
+            $compartidos = $stmt->get_result();
+            
+            if ($compartidos->num_rows > 0) {
+                while ($fila = $compartidos->fetch_assoc()) {
+                    // Reconstruimos la ruta física: uploads/Propietario/ruta_archivo
+                    $ruta_fisica = "uploads/" . $fila['nombre_propietario'] . "/" . $fila['ruta_relativa'];
+                    $nombre_amigable = htmlspecialchars($fila['nombre_archivo']);
+                    $propietario = htmlspecialchars($fila['nombre_propietario']);
+                    
+                    // Formatear la fecha
+                    $fecha = date('d/m/Y H:i', strtotime($fila['fecha_compartido']));
+                    
+                    echo "<tr style='background-color: #f8fafc;'>";
+                    echo "<td><span style='font-weight:bold; color: #1f2937;'>📄 $nombre_amigable</span></td>";
+                    echo "<td>👤 $propietario</td>";
+                    echo "<td>$fecha</td>";
+                    echo "<td>";
+                    
+                    // Comprobar que el dueño no haya borrado el archivo físico
+                    if (file_exists($ruta_fisica)) {
+                        // 1. Botón de Previsualizar (Abre en pestaña nueva gracias a target='_blank')
+                        echo "<a href='$ruta_fisica' target='_blank' class='btn-accion btn-descargar' style='background-color: #3b82f6; margin-right: 5px; text-decoration: none;'>👁️ Ver</a>";
+                        
+                        // 2. Botón de Descargar de siempre
+                        echo "<a href='$ruta_fisica' download class='btn-accion btn-descargar' style='background-color: #059669;'>⬇️ Descargar</a>";
+                    } else {
+                        echo "<span style='color: #dc3545; font-size: 0.85em;'>El propietario eliminó el archivo</span>";
+                    }
+                    
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4' style='text-align:center; color: #6b7280;'>Nadie ha compartido archivos contigo aún.</td></tr>";
+            }
+            $conexion->close();
+        }
+        ?>
+    </tbody>
+</table>
+
+    <div id="modalCompartir" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: white; padding: 30px; border-radius: 8px; max-width: 450px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            
+            <h2 style="color: #4F46E5; margin-top: 0;">🤝 Compartir Archivo</h2>
+            <p style="margin-bottom: 20px;">Vas a compartir el archivo <strong id="nombreArchivoVisible"></strong>.</p>
+            
+            <form action="compartir_archivo.php" method="POST">
+                <input type="hidden" id="inputRutaArchivo" name="ruta_archivo">
+                <input type="hidden" id="inputNombreArchivo" name="nombre_archivo">
+                
+                <p style="text-align: left; font-size: 0.9em; margin-bottom: 5px;">Correo del usuario receptor:</p>
+                <input type="email" name="email_receptor" placeholder="ejemplo@correo.com" required style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                
+                <div style="display: flex; justify-content: space-between;">
+                    <button type="button" onclick="cerrarModalCompartir()" style="padding: 10px 20px; border: none; background: #6c757d; color: white; border-radius: 4px; cursor: pointer;">
+                        Cancelar
+                    </button>
+                    
+                    <button type="submit" style="padding: 10px 20px; border: none; background: #4F46E5; color: white; border-radius: 4px; cursor: pointer;">
+                        Compartir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="modalBorrado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000;">
         <div style="background: white; padding: 30px; border-radius: 8px; max-width: 450px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
@@ -261,6 +395,18 @@ if (isset($_POST['nueva_carpeta'])) {
                 botonBorrar.style.cursor = 'not-allowed';
                 botonBorrar.style.opacity = '0.5';
             }
+        }
+
+        // --- Funciones para el Modal de Compartir ---
+        function abrirModalCompartir(nombre, ruta) {
+            document.getElementById('modalCompartir').style.display = 'flex';
+            document.getElementById('nombreArchivoVisible').innerText = nombre;
+            document.getElementById('inputNombreArchivo').value = nombre;
+            document.getElementById('inputRutaArchivo').value = ruta;
+        }
+
+        function cerrarModalCompartir() {
+            document.getElementById('modalCompartir').style.display = 'none';
         }
 
         // --- Drag & Drop: mover archivos/carpetas ---
