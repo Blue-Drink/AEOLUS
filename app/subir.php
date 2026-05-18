@@ -2,6 +2,18 @@
 session_start();
 if (!isset($_SESSION['usuario'])) { header("Location: index.html"); exit(); }
 
+// --- FUNCIÓN BÁSCULA AÑADIDA---
+function calcularTamañoDirectorio($ruta) {
+    $tamañoTotal = 0;
+    if (!file_exists($ruta)) return 0;
+    $archivos = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($ruta, FilesystemIterator::SKIP_DOTS));
+    foreach ($archivos as $archivo) {
+        $tamañoTotal += $archivo->getSize();
+    }
+    return $tamañoTotal;
+}
+// ----------------------------------------------
+
 $base = "uploads/" . $_SESSION['usuario'] . "/";
 $dir_req = isset($_POST['directorio_destino']) ? trim(str_replace('..', '', $_POST['directorio_destino']), '/\\') : '';
 $target_dir = $base . $dir_req;
@@ -10,13 +22,25 @@ if (!file_exists($target_dir)) $target_dir = $base;
 else $target_dir .= "/";
 
 if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
-    
-    // Límite de tamaño (20 MB máximo)
-    $max_size = 20 * 1024 * 1024;
+
+    // Límite de tamaño individual (20 MB máximo)
+    $max_size = 200 * 1024 * 1024;
     if ($_FILES['archivo']['size'] > $max_size) {
-        echo "<script>alert('Error: El archivo es demasiado grande (Máximo 20MB).'); window.history.back();</script>";
+        echo "<script>alert('Error: El archivo es demasiado grande (Máximo 200MB).'); window.history.back();</script>";
         exit();
     }
+
+    // --- BARRERA DE CUOTA DE 1GB ---
+    $limite_bytes = 1073741824; // 1GB
+    $ruta_carpeta_usuario = "uploads/" . $_SESSION['usuario'];
+    $tamaño_actual_bytes = calcularTamañoDirectorio($ruta_carpeta_usuario);
+    $peso_archivo_nuevo = $_FILES['archivo']['size'];
+
+    if (($tamaño_actual_bytes + $peso_archivo_nuevo) > $limite_bytes) {
+        echo "<script>alert('❌ Error: Espacio insuficiente. Superarías tu cuota máxima de 1GB.'); window.history.back();</script>";
+        exit();
+    }
+    // -------------------------------------------------------
 
     // MEJORA: Sanitización estricta del nombre y control de extensiones
     $nombre_original = basename($_FILES['archivo']['name']);
@@ -27,13 +51,13 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
     $nombre_limpio = preg_replace("/[^a-zA-Z0-9_-]/", "", $nombre_sin_ext);
     // Se reconstruye el nombre (Se evita el truco de la doble extensión archivo.php.jpg)
     $nombre_seguro = $nombre_limpio . "." . $extension;
-    
+
     // --- INICIO DEL FILTRO DE SEGURIDAD RECUPERADO ---
     $tmp_name = $_FILES['archivo']['tmp_name'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_real = finfo_file($finfo, $tmp_name);
     finfo_close($finfo);
-    
+
     // ==============================================================================
     // Contracomprobación Cruzada Mime/Extensión
 
@@ -78,7 +102,7 @@ if (isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
         'application/zip'              => ['zip'],
         'application/x-rar-compressed' => ['rar'],
         'application/x-7z-compressed'  => ['7z']
-    ];    
+    ];
 
     // 1. Comprobamos si el interior del archivo está en nuestra lista segura
     if (!array_key_exists($mime_real, $mapa_extensiones_seguras)) {
