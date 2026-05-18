@@ -24,7 +24,7 @@ if (!file_exists($current_path)) $current_path = $base_path;
 
 // --- CÁLCULOS DE LA BARRA DE PROGRESO ---
 $bytes_usados = calcularTamañoDirectorio("uploads/" . $_SESSION['usuario']);
-$megas_usados = round($bytes_usados / 1048576, 2); 
+$megas_usados = round($bytes_usados / 1048576, 2);
 $porcentaje = round(($bytes_usados / 1073741824) * 100, 1);
 $ancho_barra = min($porcentaje, 100); // Para que no se rompa el diseño si se pasa del 100% por un bug
 // ----------------------------------------
@@ -68,6 +68,13 @@ if (isset($_POST['nueva_carpeta'])) {
     <title>Mis Archivos</title>
     <link rel="stylesheet" href="estilos.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos mínimos para drag & drop */
+        .drag-over { background-color: #ecfeff !important; }
+        .dragging { opacity: 0.6; }
+        .drop-hint { font-size: 0.85em; color: #0ea5a4; margin-left: 8px; }
+        tr.item-row { cursor: default; }
+    </style>
 </head>
 <body class="body-leer">
 
@@ -136,13 +143,14 @@ if (isset($_POST['nueva_carpeta'])) {
     </thead>
     <tbody>
         <?php
-        // Botón Atrás
+        // Botón Volver (ahora también acepta drop para mover al padre)
         if ($req !== '') {
             $parent = dirname($req);
             $back = ($parent == '.' || $parent == '/') ? '' : $parent;
-            echo "<tr style='background:#f3f4f6'>
+            $backEsc = htmlspecialchars($back, ENT_QUOTES);
+            echo "<tr class='drop-target' data-destdir='$backEsc' data-destname='' style='background:#f3f4f6'>
                     <td colspan='3'>
-                        <a href='leer.php?dir=".urlencode($back)."'>⬅️ Volver atrás</a>
+                        <a href='leer.php?dir=".urlencode($back)."'>⬅️ Volver</a>
                     </td>
                   </tr>";
         }
@@ -163,7 +171,13 @@ if (isset($_POST['nueva_carpeta'])) {
 
             $size = $isDir ? "-" : round(filesize($full)/1024, 2) . " KB";
 
-            echo "<tr>";
+            // Código de Isaac para el Drag & Drop
+            $safeNameAttr = htmlspecialchars($f, ENT_QUOTES);
+            $isDirAttr = $isDir ? 1 : 0;
+            // data-destdir / data-destname: si es carpeta, indican la carpeta destino (actual)
+            $dataDestDir = htmlspecialchars($req, ENT_QUOTES);
+            $dataDestName = $isDir ? $safeNameAttr : '';
+            echo "<tr class='item-row' draggable='true' data-name='$safeNameAttr' data-isdir='$isDirAttr' data-destdir='$dataDestDir' data-destname='$dataDestName'>";
 
             // Columna Nombre + Renombrar
             echo "<td>
@@ -248,6 +262,82 @@ if (isset($_POST['nueva_carpeta'])) {
                 botonBorrar.style.opacity = '0.5';
             }
         }
+
+        // --- Drag & Drop: mover archivos/carpetas ---
+        (function(){
+            const currentDir = <?php echo json_encode($req); ?>;
+
+            function setupDnD(){
+                // Draggables: filas con class item-row
+                const draggables = document.querySelectorAll('tr.item-row[draggable="true"]');
+                draggables.forEach(row => {
+                    row.addEventListener('dragstart', (e) => {
+                        row.classList.add('dragging');
+                        const payload = { name: row.dataset.name, isDir: row.dataset.isdir, dir: currentDir };
+                        e.dataTransfer.setData('text/plain', JSON.stringify(payload));
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+                    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+                });
+
+                // Drop targets: carpetas y fila 'Volver' (class drop-target)
+                const dropTargets = document.querySelectorAll('tr.drop-target, tr.item-row[data-isdir="1"]');
+                dropTargets.forEach(row => {
+                    row.addEventListener('dragover', (e) => {
+                        // Sólo permitir si viene un payload
+                        if (e.dataTransfer.types.includes('text/plain')) {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
+                            row.classList.add('drag-over');
+                        }
+                    });
+                    row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+
+                    row.addEventListener('drop', async (e) => {
+                        e.preventDefault();
+                        row.classList.remove('drag-over');
+                        try {
+                            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                            if (!data || !data.name) return;
+
+                            // Destino determinado por data-destdir / data-destname
+                            const destDir = row.dataset.destdir !== undefined ? row.dataset.destdir : currentDir;
+                            const destName = row.dataset.destname !== undefined ? row.dataset.destname : (row.dataset.name || '');
+
+                            // Evitar mover dentro de sí mismo (cuando destino es la propia carpeta)
+                            if (data.name === destName && data.dir === destDir) {
+                                alert('No se puede mover dentro del mismo elemento.');
+                                return;
+                            }
+
+                            const body = { srcName: data.name, srcDir: data.dir, destName: destName, destDir: destDir };
+
+                            // Confirmación antes de mover
+                            const destLabel = destName || destDir || '/';
+                            const ok = confirm(`¿Mover "${data.name}" a "${destLabel}"?`);
+                            if (!ok) return;
+
+                            const res = await fetch('mover.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(body)
+                            });
+
+                            const result = await res.json();
+                            if (result.success) window.location.reload();
+                            else alert('Error al mover: ' + (result.error || 'error desconocido'));
+                        } catch (err) {
+                            console.error(err);
+                            alert('Error al procesar el movimiento.');
+                        }
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupDnD);
+            else setupDnD();
+        })();
     </script>
 
 </body>
+</html>
