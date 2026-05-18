@@ -3,48 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="icon" type="image/png" href="AEOLUS.png">
-    
-    <title>Inicio de Sesión</title>
+    <title>AEOLUS Cloud | Acceso Seguro</title>
     <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body class="body-split">
 
-<body class="body-login">
-
-    <table id="banner">
-        <tr>
-            <td>Bienvenido a AEOLUS CLOUD</td>
-        </tr>
-    </table>
-
-    <div class="logo-container">
-        <img src="AEOLUS.png" alt="Logo Aeolus">
-    </div>
-
-    <form action="log.php" method="post" class="form-login">
-        <h2 style="text-align:center; color:#333; margin-top:0;">Iniciar Sesión</h2>
-
-        <label style="display:block; margin-bottom:5px; color:#666;">Usuario</label>
-        <input type="text" id="usuario" name="usuario" required style="width:100%; margin-bottom:15px; box-sizing:border-box;">
-
-        <label style="display:block; margin-bottom:5px; color:#666;">Contraseña</label>
-        <div class="password-wrapper">
-            <input type="password" id="clave" name="clave" required style="width:100%; margin-bottom:20px; box-sizing:border-box;">
-            <span id="togglePassword" class="toggle-icon">👁️</span>
-        </div>
+    <div class="split-container">
         
-
-        <input type="submit" value="Entrar">
-        
-        <div style="justify-content:center; margin-top:15px; display:flex; align-items:baseline; gap:15px">
-            <a href="./registro.html" style="font-size:0.9em;">Registrarse</a>
-            <a href="./recuperar.html" style="font-size:0.9em;">Recuperar contraseña</a>
+        <div class="panel-visual">
+            <div class="visual-content">
+                <div class="logo-wrapper">
+                    <img src="AEOLUS.png" alt="Logo Aeolus">
+                </div>
+                <h1 class="brand-title">AEOLUS <span>Cloud</span></h1>
+                <p class="brand-subtitle">Almacenamiento seguro, privado<br>y de alto rendimiento.</p>
+            </div>
+            <div class="footer-login" style="text-align: center; line-height: 1.6;">
+                AEOLUS Project © 2026 | Desarrollo y Sistemas<br>
+                <span style="font-size: 0.9em; opacity: 0.85;">Por: Patricia Ortiz, Pablo Porras e Isaac Rios</span>
+            </div>
         </div>
-    </form>
 
-    <div class="footer-login">
-        Proyecto hecho por Pablo Porras, Isaac Rios y Patricia Ortiz © 2026
+        <div class="panel-formulario">
+            <div class="form-wrapper">
+                
+                <form action="log.php" method="post" class="form-login">
+                    <h2>Iniciar Sesión</h2>
+                    <p class="form-intro">Introduce tus credenciales para acceder a tu nube privada.</p>
+
+                    <div class="input-group">
+                        <label for="usuario">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Ej. pablo_porras" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="clave">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="clave" name="clave" placeholder="••••••••" required>
+                            <span id="togglePassword" class="toggle-icon">👁️</span>
+                        </div>
+                    </div>
+
+                    <input type="submit" value="Entrar al Sistema" class="btn-submit">
+                    
+                    <div class="form-links">
+                        <a href="./registro.html" class="link-primary">Crear una cuenta</a>
+                        <span class="separator">•</span>
+                        <a href="./recuperar.html" class="link-secondary">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
     </div>
 
     <script src="togglePassword.js" defer></script>
