@@ -4,38 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="AEOLUS.png">
-    <title>Recuperar Contraseña</title>
+    <title>AEOLUS Cloud | Recuperar Contraseña</title>
     <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="body-login">
+<body class="body-split">
 
-    <table id="banner">
-        <tr>
-            <td>Recuperar contraseña</td>
-        </tr>
-    </table>
-
-    <div class="logo-container">
-        <img src="AEOLUS.png" alt="Logo Aeolus">
-    </div>
-
-    <form action="recuperar.php" method="post" class="form-login">
-        <h2 style="text-align:center; color:#333; margin-top:0;">Recuperar contraseña</h2>
-
-        <label style="display:block; margin-bottom:5px; color:#666;">Correo electrónico</label>
-        <input type="email" name="email" required placeholder="Ingrese su correo" style="width:100%; margin-bottom:15px; box-sizing:border-box;">
-
-        <p style="font-size:0.9em; color:#555; margin-bottom:20px;">Te enviaremos un enlace para restablecer tu contraseña al correo asociado a tu cuenta.</p>
-
-        <input type="submit" value="Enviar enlace">
-
-        <div style="text-align:center; margin-top:15px;">
-            <a href="./index.html" style="font-size:0.9em;">Volver al inicio de sesión</a>
+    <div class="split-container">
+        
+        <div class="panel-visual">
+            <div class="visual-content">
+                <div class="logo-wrapper">
+                    <img src="AEOLUS.png" alt="Logo Aeolus">
+                </div>
+                <h1 class="brand-title">AEOLUS <span>Cloud</span></h1>
+                <p class="brand-subtitle">Almacenamiento seguro, privado<br>y de alto rendimiento.</p>
+            </div>
+            <div class="footer-login" style="text-align: center; line-height: 1.6;">
+                AEOLUS Project © 2026 | Desarrollo y Sistemas<br>
+                <span style="font-size: 0.9em; opacity: 0.85;">Por: Patricia Ortiz, Pablo Porras e Isaac Rios</span>
+            </div>
         </div>
-    </form>
 
-    <div class="footer-login">
-        Proyecto hecho por Pablo Porras, Isaac Rios y Patricia Ortiz © 2026
+        <div class="panel-formulario">
+            <div class="form-wrapper">
+                
+                <form action="recuperar.php" method="post" class="form-login">
+                    <h2>Recuperar Contraseña</h2>
+                    <p class="form-intro">Te enviaremos un enlace seguro para restablecer tu acceso a la nube.</p>
+
+                    <div class="input-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" required placeholder="Introduce tu correo asociado">
+                    </div>
+
+                    <input type="submit" value="Enviar enlace de restauración" class="btn-submit">
+                    
+                    <div class="form-links">
+                        <a href="./index.html" class="link-primary">Volver al inicio de sesión</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
     </div>
 
 </body>

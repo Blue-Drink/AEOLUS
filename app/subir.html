@@ -2,33 +2,256 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Subir Archivo</title>
-    <link rel="stylesheet" href="estilos.css">
-</head>
-<body class="body-subir">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="AEOLUS.png">
+    <title>AEOLUS | Subir Archivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS ENCAPSULADOS DEL DASHBOARD --- */
+        :root {
+            --gradient-sidebar: linear-gradient(135deg, #2563eb 0%, #4f46e5 30%, #7c3aed 65%, #db2777 100%);
+            --bg-main: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4F46E5;
+            --primary-light: #e0e7ff;
+            --border: #e2e8f0;
+        }
 
-    <div class="file-upload-wrapper">
-        <h2 style="margin-top:0;">Subir a la nube</h2>
-        <p>Selecciona el archivo que deseas guardar</p>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* BARRA LATERAL (SIDEBAR UNIFICADA) */
+        .sidebar {
+            width: 280px;
+            background: var(--gradient-sidebar);
+            color: white;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 4px 0 25px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .sidebar-logo img {
+            width: 42px;
+            height: 42px;
+            background: white;
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        /* ESPACIO PRINCIPAL */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px 32px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        .user-greeting h2 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+        .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+        /* PANEL CENTRAL DE SUBIDA */
+        .upload-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .upload-card h3 { font-size: 1.6rem; font-weight: 700; margin: 0 0 8px 0; }
+        .upload-card p { color: var(--text-muted); margin-top: 0; margin-bottom: 2rem; font-size: 0.95rem; }
+
+        /* Dropzone Estilizada */
+        .dropzone-area {
+            border: 2px dashed var(--primary);
+            background-color: #f8fafc;
+            padding: 40px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .dropzone-area:hover { background-color: #f0fdf4; border-color: #10b981; }
+
+        .dropzone-icon { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
+
+        .dropzone-area input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-info-text { font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
+
+        /* Botones */
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn-submit:hover { background-color: #4338ca; }
+
+        .link-back {
+            display: inline-block;
+            margin-top: 1.2rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .link-back:hover { color: var(--text-main); text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="AEOLUS.png" alt="Logo">
+            <h1>AEOLUS <span>Cloud</span></h1>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="javascript:history.back()"><i class="fas fa-arrow-left"></i> Volver a la Unidad</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
         
-        <form action="subir.php" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            
-            <div style="border: 2px dashed #4F46E5; background-color: #f8fafc; padding: 30px 20px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 8px; cursor: pointer;">
-                <input type="file" name="archivo" required style="width: 100%; cursor: pointer;">
+        <div class="top-navbar">
+            <div class="user-greeting">
+                <h2>Cargar nuevo fichero</h2>
+                <div class="breadcrumb" id="display_ruta"><i class="fas fa-hdd"></i> root / </div>
             </div>
+        </div>
+
+        <div class="upload-card">
+            <div class="dropzone-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3>Subir a la nube</h3>
+            <p>Elige el documento o arrástralo al recuadro para añadirlo a tu directorio.</p>
             
-            <input type="hidden" name="directorio_destino" id="dir_input">
-            
-            <input type="submit" value="Comenzar Subida" style="width: 100%; padding: 12px; background-color: #4F46E5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.3s;">
-            
-            <a href="javascript:history.back()" style="color: #64748b; text-decoration: none; font-size: 0.9em; margin-top: 5px;">Cancelar y Volver</a>
-        </form>
+            <form action="subir.php" method="post" enctype="multipart/form-data">
+                
+                <div class="dropzone-area">
+                    <input type="file" name="archivo" id="file_input" required onchange="actualizarTextoArchivo()">
+                    <div class="file-info-text" id="file_label">
+                        <i class="fas fa-mouse-pointer"></i> Haz clic aquí para examinar archivos
+                    </div>
+                </div>
+                
+                <input type="hidden" name="directorio_destino" id="dir_input">
+                
+                <input type="submit" value="Comenzar Subida al Servidor" class="btn-submit">
+                
+                <a href="javascript:history.back()" class="link-back">Cancelar y regresar</a>
+            </form>
+        </div>
+
     </div>
 
     <script>
-        // Javascript para obtener la carpeta de la URL
+        // Capturar parámetros de la URL para inyectar el directorio destino
         const params = new URLSearchParams(window.location.search);
-        document.getElementById('dir_input').value = params.get('dir') || '';
+        const folder = params.get('dir') || '';
+        document.getElementById('dir_input').value = folder;
+        document.getElementById('display_ruta').innerHTML += folder ? folder : 'Inicio';
+
+        // Feedback interactivo para saber qué archivo se va a subir
+        function actualizarTextoArchivo() {
+            const input = document.getElementById('file_input');
+            const label = document.getElementById('file_label');
+            if (input.files.length > 0) {
+                label.innerHTML = `<i class="fas fa-file-check" style="color:#10b981"></i> Listo: <strong>${input.files[0].name}</strong>`;
+                label.style.color = '#10b981';
+            }
+        }
     </script>
 
 </body>

@@ -1,215 +1,225 @@
-/* --- Variables y Reset --- */
+/* --- Variables de Diseño --- */
 :root {
-    --primary: #4F46E5;
+    /* Vuestro degradado favorito: Azul -> Morado -> Rosa */
+    --gradient-aeolus: linear-gradient(135deg, #2563eb 0%, #4f46e5 30%, #7c3aed 65%, #db2777 100%);
+    
+    --primary: #4F46E5;        /* El azul/morado de los botones */
     --primary-dark: #3730a3;
-    --secondary: #10b981;
-    --danger: #ef4444;
-    --bg-body: #f3f4f6;
-    --bg-white: #ffffff;
-    --text-main: #1f2937;
-    --text-light: #6b7280;
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --text-main: #0f172a;      /* Gris casi negro para el formulario */
+    --text-muted: #64748b;     /* Gris para textos secundarios */
+    --border: #e2e8f0;
 }
 
+/* --- Reset General --- */
+* { box-sizing: border-box; }
 body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--bg-body);
+    background-color: #ffffff;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Contenedor Split (Pantalla Dividida) --- */
+.split-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* --- 1. Panel Visual (El bloque del degradado) --- */
+.panel-visual {
+    flex: 1.1; 
+    background: var(--gradient-aeolus); /* Recuperamos vuestro degradado */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+    color: white; /* Textos en blanco para contrastar con el degradado */
+}
+
+.visual-content {
+    text-align: center;
+    max-width: 450px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* El Contenedor del Logotipo: Ahora en Blanco Puro */
+.logo-wrapper {
+    /* --- CAMBIO AQUÍ: Fondo blanco puro para que el PNG transparente resalte --- */
+    background-color: #ffffff; 
+    
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 2rem auto;
+    border-radius: 28px; /* Esquinas redondeadas súper suaves */
+    padding: 16px; /* Espacio interno para que respire el logo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Sombra elegante para dar volumen sobre el degradado */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-wrapper img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.brand-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -1px;
+    color: #ffffff;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.brand-title span {
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+.brand-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+/* --- 2. Panel del Formulario (Zona limpia) --- */
+.panel-formulario {
+    flex: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: #f8fafc; 
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 380px;
+    animation: fadeInRight 0.6s ease-out;
+}
+
+.form-login h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
     color: var(--text-main);
 }
 
-/* --- Estilos para Login y Registro (Centrado) --- */
-.body-login, .body-registro {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.form-intro {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    margin-top: 0;
 }
 
-#banner {
-    color: white;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.logo-container {
-    text-align: center;
-    margin-bottom: 20px;
+/* --- Inputs y Maquetación --- */
+.input-group {
+    margin-bottom: 1.25rem;
 }
 
-.logo-container img {
-    width: 130px;        /* Tamaño fijo controlado */
-    height: auto;        /* Mantiene proporción */
+.input-group label {
     display: block;
-    margin: 0 auto 1.5rem auto; /* Centrado y separado del formulario */
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
 }
 
-/* --- Ajuste del Footer (Más pequeño y elegante) --- */
-.footer-login {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+input[type="text"], 
+input[type="password"],
+input[type="email"] {
     width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background-color: white;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus, 
+input[type="password"]:focus,
+input[type="email"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+/* Ocultar/Mostrar Contraseña */
+.password-wrapper { position: relative; }
+.toggle-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.5;
+    color: var(--text-main);
+}
+.toggle-icon:hover { opacity: 1; }
+
+/* --- Botón Enviar --- */
+.btn-submit {
+    background-color: var(--primary);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.btn-submit:hover { background-color: var(--primary-dark); }
+.btn-submit:active { transform: scale(0.98); }
+
+/* --- Enlaces inferiores --- */
+.form-links {
+    margin-top: 2rem;
     text-align: center;
-    padding: 10px 0;
-    
-    /* ESTILOS DE TEXTO CORREGIDOS */
-    color: rgba(255, 255, 255, 0.6); /* Blanco semitransparente (sutil) */
-    font-size: 11px;                 /* Letra pequeña estilo firma */
-    font-family: sans-serif;
-    letter-spacing: 1px;             /* Separación entre letras para elegancia */
-    pointer-events: none;            /* Para que no interfiera con clics */
+    font-size: 0.9rem;
+}
+.link-primary { color: var(--primary); font-weight: 600; text-decoration: none; }
+.link-secondary { color: var(--text-muted); text-decoration: none; }
+.link-primary:hover, .link-secondary:hover { text-decoration: underline; }
+.separator { color: var(--border); margin: 0 8px; }
+
+/* --- Footer Integrado con Creadores --- */
+.footer-login {
+    position: absolute;
+    bottom: 20px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-/* Agregamos padding al body para que el formulario nunca toque el footer en pantallas bajas */
-.body-login {
-    padding-bottom: 40px; 
+/* --- Adaptación para Móviles --- */
+@media (max-width: 768px) {
+    .split-container { flex-direction: column; }
+    .panel-visual { padding: 60px 20px; order: 1; }
+    .panel-formulario { padding: 40px 20px; order: 2; }
+    .footer-login { position: relative; bottom: auto; margin-top: 40px; }
 }
 
-.form-login, .form-registro {
-    background: var(--bg-white);
-    padding: 2.5rem;
-    border-radius: 1rem;
-    box-shadow: var(--shadow);
-    width: 100%;
-    max-width: 350px;
-    animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
+/* --- Animaciones de Carga --- */
+@keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-input[type="text"], input[type="password"], input[type="email"], textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    box-sizing: border-box;
-    transition: 0.3s;
-}
-
-input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-}
-
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.toggle-icon {
-    position: absolute;
-    right: 12px;
-    top: 38%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 18px;
-    user-select: none;
-}
-
-input[type="submit"] {
-    background-color: var(--primary);
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-input[type="submit"]:hover {
-    background-color: var(--primary-dark);
-}
-
-a {
-    color: var(--primary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-/* --- Estilos para Dashboard (leer.php) --- */
-.body-leer {
-    padding: 2rem;
-}
-
-.header-container {
-    background: white;
-    padding: 1rem 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.logout-btn {
-    background-color: var(--danger);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 6px;
-}
-
-.logout-btn:hover { background-color: #dc2626; }
-
-.tabla-leer {
-    width: 100%;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    border-collapse: collapse;
-}
-
-.tabla-leer th {
-    background-color: #f8fafc;
-    text-align: left;
-    padding: 15px;
-    color: var(--text-light);
-    font-weight: 600;
-}
-
-.tabla-leer td {
-    padding: 15px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.tabla-leer tr:hover { background-color: #f9fafb; }
-
-.btn-accion {
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-right: 5px;
-}
-.btn-borrar { background-color: #fee2e2; color: var(--danger); }
-.btn-descargar { background-color: #e0e7ff; color: var(--primary); }
-
-/* --- Subir Archivo --- */
-.body-subir {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.file-upload-wrapper {
-    text-align: center;
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: var(--shadow);
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
