@@ -1,0 +1,48 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) { 
+    header("Location: index.html"); 
+    exit(); 
+}
+
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Subir Archivo</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="body-subir">
+
+    <div class="file-upload-wrapper">
+        <h2 style="margin-top:0;">Subir a la nube</h2>
+        <p>Selecciona el archivo que deseas guardar</p>
+        
+        <form action="subir.php" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            
+            <div style="border: 2px dashed #4F46E5; background-color: #f8fafc; padding: 30px 20px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 8px; cursor: pointer;">
+                <input type="file" name="archivo" required style="width: 100%; cursor: pointer;">
+            </div>
+            
+            <input type="hidden" name="directorio_destino" id="dir_input">
+            
+            <input type="submit" value="Comenzar Subida" style="width: 100%; padding: 12px; background-color: #4F46E5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.3s;">
+            
+            <a href="javascript:history.back()" style="color: #64748b; text-decoration: none; font-size: 0.9em; margin-top: 5px;">Cancelar y Volver</a>
+        </form>
+    </div>
+
+    <script>
+        // Javascript para obtener la carpeta de la URL
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('dir_input').value = params.get('dir') || '';
+    </script>
+
+</body>
+</html>
