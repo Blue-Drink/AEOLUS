@@ -12,6 +12,13 @@ function calcularTamañoDirectorio($ruta) {
     }
     return $tamañoTotal;
 }
+// Formatea bytes a unidades legibles (B, KB, MB, GB...)
+function human_filesize($bytes, $decimals = 2) {
+    if ($bytes <= 0) return '0 B';
+    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $i = floor(log($bytes, 1024));
+    return round($bytes / pow(1024, $i), $decimals) . ' ' . $units[$i];
+}
 // ----------------------------------------------
 
 $base_path = "uploads/" . $_SESSION['usuario'] . "/";
@@ -24,8 +31,10 @@ if (!file_exists($current_path)) $current_path = $base_path;
 
 // --- CÁLCULOS DE LA BARRA DE PROGRESO ---
 $bytes_usados = calcularTamañoDirectorio("uploads/" . $_SESSION['usuario']);
-$megas_usados = round($bytes_usados / 1048576, 2);
-$porcentaje = round(($bytes_usados / 1073741824) * 100, 1);
+$used_display = human_filesize($bytes_usados, 2);
+$quota_bytes = 1073741824; // 1 GB
+$quota_display = human_filesize($quota_bytes, 2);
+$porcentaje = $quota_bytes > 0 ? round(($bytes_usados / $quota_bytes) * 100, 1) : 0;
 $ancho_barra = min($porcentaje, 100); // Para que no se rompa el diseño si se pasa del 100% por un bug
 // ----------------------------------------
 
@@ -407,7 +416,7 @@ if (isset($_POST['nueva_carpeta'])) {
             </div>
             <div class="quota-info" style="margin-top: 8px; font-size: 0.75rem; opacity: 0.8;">
                 <span></span>
-                <span><?php echo $megas_usados; ?> MB / 1024 MB</span>
+                <span><?php echo $used_display; ?> / <?php echo $quota_display; ?></span>
             </div>
         </div>
     </div>
@@ -510,7 +519,7 @@ if (isset($_POST['nueva_carpeta'])) {
                         // Iconos sutiles de FontAwesome según tipo
                         $iconClass = $isDir ? "fas fa-folder icon-folder" : "fas fa-file-alt icon-file";
 
-                        $size = $isDir ? "--" : round(filesize($full)/1024, 2) . " KB";
+                        $size = $isDir ? "--" : human_filesize(filesize($full), 2);
 
                         // Atributos de Isaac para Drag & Drop
                         $safeNameAttr = htmlspecialchars($f, ENT_QUOTES);
