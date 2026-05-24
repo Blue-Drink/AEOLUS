@@ -1,9 +1,9 @@
-app/.env
-app/vendor/
+backend/.env
+backend/vendor/
 *.log
 
 # Evitar subir archivos personales de los usuarios por seguridad, privacidad y peso del repositorio
-app/uploads/
+backend/uploads/
 
 # Ocultar configuraciones y preferencias locales del editor Visual Studio Code
 .vscode/
