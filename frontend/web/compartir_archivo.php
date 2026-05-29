@@ -7,8 +7,8 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 // Cargar variables de entorno y conexión
-require 'vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+require '../../backend/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend');
 $dotenv->load();
 
 $conexion = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
