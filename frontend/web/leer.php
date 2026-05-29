@@ -44,7 +44,7 @@ if (isset($_POST['nuevo_nombre']) && isset($_POST['archivo_original'])) {
     $dest = $current_path . '/' . basename($_POST['nuevo_nombre']);
     if (file_exists($orig)) rename($orig, $dest);
 
-    $_SESSION['mensaje'] = "Archivo renombrado con éxito."; 
+    $_SESSION['mensaje'] = "Archivo renombrado con éxito.";
     header("Location: leer.php?dir=" . urlencode($req));
     exit;
 }
@@ -56,7 +56,7 @@ if (isset($_POST['nueva_carpeta'])) {
     if (empty($d)) {
         $_SESSION['error'] = "Introduzca un nombre para la carpeta.";
     } else {
-        $ruta_destino = $current_path . '/' . $d; 
+        $ruta_destino = $current_path . '/' . $d;
 
         if (!file_exists($ruta_destino)) {
             @mkdir($ruta_destino, 0777);
@@ -79,7 +79,7 @@ if (isset($_POST['nueva_carpeta'])) {
     <title>AEOLUS | Mi Almacenamiento</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <style>
         /* --- ESTILOS DEL INTERFAZ DE EXPLORADOR PROFESIONAL --- */
         :root {
@@ -96,7 +96,7 @@ if (isset($_POST['nueva_carpeta'])) {
         }
 
         * { box-sizing: border-box; }
-        
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
             margin: 0;
@@ -233,7 +233,7 @@ if (isset($_POST['nueva_carpeta'])) {
         .user-greeting .breadcrumb { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
 
         .nav-actions { display: flex; gap: 12px; }
-        
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -326,7 +326,7 @@ if (isset($_POST['nueva_carpeta'])) {
         .item-name-wrapper { display: flex; align-items: center; gap: 12px; }
         .item-link { text-decoration: none; color: var(--text-main); font-weight: 600; transition: color 0.2s; }
         .item-link:hover { color: var(--primary); }
-        
+
         .icon-folder { color: #f59e0b; font-size: 1.2rem; }
         .icon-file { color: #3b82f6; font-size: 1.2rem; }
 
@@ -396,7 +396,7 @@ if (isset($_POST['nueva_carpeta'])) {
             <img src="AEOLUS.png" alt="Logo">
             <h1>AEOLUS <span>Cloud</span></h1>
         </div>
-        
+
         <ul class="sidebar-menu">
             <li class="menu-item active">
                 <a href="leer.php"><i class="fas fa-folder-open"></i> Mis Archivos</a>
@@ -422,7 +422,7 @@ if (isset($_POST['nueva_carpeta'])) {
     </div>
 
     <div class="main-content">
-        
+
         <div class="top-navbar">
             <div class="user-greeting">
                 <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']); ?></h2>
@@ -491,11 +491,11 @@ if (isset($_POST['nueva_carpeta'])) {
 
                     // Cargar lista de compartidos para chivato
                     $mis_archivos_compartidos = [];
-		    require_once '../../backend/vendor/autoload.php';
-		    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend');
+                    require_once '../../backend/vendor/autoload.php';
+                    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend');
                     $dotenv->safeLoad();
                     $conexion_chivato = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
-                    
+
                     if (!$conexion_chivato->connect_error) {
                         $stmt_chivato = $conexion_chivato->prepare("SELECT ruta_relativa FROM archivos_compartidos WHERE id_propietario = (SELECT id_usuario FROM usuario WHERE usuario = ?)");
                         $stmt_chivato->bind_param("s", $_SESSION['usuario']);
@@ -515,7 +515,7 @@ if (isset($_POST['nueva_carpeta'])) {
 
                         $link = $isDir ? "leer.php?dir=" . urlencode(($req ? $req.'/' : '') . $f) : "abrir_archivos.php?file=" . urlencode($f) . "&dir=" . urlencode($req);
                         $target = $isDir ? "" : " target='_blank'";
-                        
+
                         // Iconos sutiles de FontAwesome según tipo
                         $iconClass = $isDir ? "fas fa-folder icon-folder" : "fas fa-file-alt icon-file";
 
@@ -526,12 +526,12 @@ if (isset($_POST['nueva_carpeta'])) {
                         $isDirAttr = $isDir ? 1 : 0;
                         $dataDestDir = htmlspecialchars($req, ENT_QUOTES);
                         $dataDestName = $isDir ? $safeNameAttr : '';
-                        
+
                         echo "<tr class='item-row' draggable='true' data-name='$safeNameAttr' data-isdir='$isDirAttr' data-destdir='$dataDestDir' data-destname='$dataDestName'>";
-                        
+
                         // Pegatina de Compartido refinada
                         $ruta_relativa_completa = ($req ? $req.'/' : '') . $f;
-                        $etiqueta_compartido = ""; 
+                        $etiqueta_compartido = "";
                         if (!$isDir && in_array($ruta_relativa_completa, $mis_archivos_compartidos)) {
                             $etiqueta_compartido = "<span class='badge-shared'><i class='fas fa-link'></i> Compartido</span>";
                         }
@@ -542,7 +542,7 @@ if (isset($_POST['nueva_carpeta'])) {
                                     <i class='$iconClass'></i>
                                     <a href='$link'$target class='item-link'>$f</a>
                                     $etiqueta_compartido
-                                    
+
                                     <form method='post' class='rename-form'>
                                         <input type='hidden' name='archivo_original' value='$f'>
                                         <input type='text' name='nuevo_nombre' placeholder='Renombrar' class='rename-input' required>
@@ -570,7 +570,7 @@ if (isset($_POST['nueva_carpeta'])) {
                         echo "</div></td>";
                         echo "</tr>";
                     }
-                    
+
                     // --- NUEVO: ZONA DE ARRASTRE PERMANENTE AL FINAL DE LA TABLA ---
                     echo "<tr>
                             <td colspan='3' style='text-align:center; color:var(--text-muted); padding: 35px; background-color: #f8fafc; border-top: 2px dashed #cbd5e1;'>
@@ -599,37 +599,42 @@ if (isset($_POST['nueva_carpeta'])) {
                     $conexion = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
                     if (!$conexion->connect_error) {
                         $mi_usuario = $_SESSION['usuario'];
-                        $sql = "SELECT ac.nombre_archivo, ac.ruta_relativa, ac.fecha_compartido, prop.usuario AS nombre_propietario 
-                                FROM archivos_compartidos ac 
-                                JOIN usuario rec ON ac.id_receptor = rec.id_usuario 
-                                JOIN usuario prop ON ac.id_propietario = prop.id_usuario 
+                        $sql = "SELECT ac.nombre_archivo, ac.ruta_relativa, ac.fecha_compartido, prop.usuario AS nombre_propietario
+                                FROM archivos_compartidos ac
+                                JOIN usuario rec ON ac.id_receptor = rec.id_usuario
+                                JOIN usuario prop ON ac.id_propietario = prop.id_usuario
                                 WHERE rec.usuario = ?";
-                                
+
                         $stmt = $conexion->prepare($sql);
                         $stmt->bind_param("s", $mi_usuario);
                         $stmt->execute();
                         $compartidos = $stmt->get_result();
-                        
+
                         if ($compartidos->num_rows > 0) {
                             while ($fila = $compartidos->fetch_assoc()) {
-				$ruta_fisica = "../../backend/uploads/" . $fila['nombre_propietario'] . "/" . $fila['ruta_relativa'];
+                                $ruta_fisica = "../../backend/uploads/" . $fila['nombre_propietario'] . "/" . $fila['ruta_relativa'];
+                                
+                                // CAMBIO TÉCNICO: Links usando el script PHP puente para evitar errores 403 de Apache
+                                $link_ver = "ver_compartido.php?f=" . urlencode($ruta_fisica);
+                                $link_descargar = "ver_compartido.php?f=" . urlencode($ruta_fisica) . "&descargar=1";
+
                                 $nombre_amigable = htmlspecialchars($fila['nombre_archivo']);
                                 $propietario = htmlspecialchars($fila['nombre_propietario']);
                                 $fecha = date('d/m/Y H:i', strtotime($fila['fecha_compartido']));
-                                
+
                                 echo "<tr>";
                                 echo "<td><div class='item-name-wrapper'><i class='fas fa-file-signature' style='color:var(--success)'></i> <span style='font-weight:600;'>$nombre_amigable</span></div></td>";
                                 echo "<td><span style='font-weight:500; color:var(--text-muted)'><i class='fas fa-user-circle'></i> $propietario</span></td>";
                                 echo "<td style='color: var(--text-muted); font-size:0.9rem;'>$fecha</td>";
                                 echo "<td><div class='actions-cell'>";
-                                
+
                                 if (file_exists($ruta_fisica)) {
-                                    echo "<a href='$ruta_fisica' target='_blank' class='action-icon-btn btn-view' title='Ver'><i class='fas fa-eye'></i></a>";
-                                    echo "<a href='$ruta_fisica' download class='action-icon-btn btn-download' style='background-color:#d1fae5; color:#059669;' title='Descargar'><i class='fas fa-download'></i></a>";
+                                    echo "<a href='$link_ver' target='_blank' class='action-icon-btn btn-view' title='Ver'><i class='fas fa-eye'></i></a>";
+                                    echo "<a href='$link_descargar' class='action-icon-btn btn-download' style='background-color:#d1fae5; color:#059669;' title='Descargar'><i class='fas fa-download'></i></a>";
                                 } else {
                                     echo "<span style='color: var(--danger); font-size: 0.8em; font-weight:600;'>Archivo eliminado en origen</span>";
                                 }
-                                
+
                                 echo "</div></td>";
                                 echo "</tr>";
                             }
@@ -652,16 +657,15 @@ if (isset($_POST['nueva_carpeta'])) {
             </div>
             <h2 style="margin-top: 0; font-weight:700;">Compartir Archivo</h2>
             <p style="color: var(--text-muted); font-size:0.95rem; margin-bottom: 20px;">Vas a conceder permisos de lectura para: <br><strong id="nombreArchivoVisible" style="color:var(--text-main)"></strong></p>
-            
+
             <form action="compartir_archivo.php" method="POST">
                 <input type="hidden" id="inputRutaArchivo" name="ruta_archivo">
                 <input type="hidden" id="inputNombreArchivo" name="nombre_archivo">
-                
+
                 <div style="text-align: left; margin-bottom: 20px;">
-                    <label style="font-size: 0.85rem; font-weight: 600; color: #475569; display:block; margin-bottom:6px;">Correo electrónico del destinatario:</label>
                     <input type="email" name="email_receptor" placeholder="ejemplo@correo.com" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family:inherit;">
                 </div>
-                
+
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
                     <button type="button" onclick="cerrarModalCompartir()" class="btn" style="background:#e2e8f0; color:#475569;">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Otorgar Acceso</button>
@@ -754,9 +758,7 @@ if (isset($_POST['nueva_carpeta'])) {
                     row.addEventListener('dragover', (e) => {
                         const types = Array.from(e.dataTransfer.types || []);
                         if (types.includes('text/plain') || transferHasFiles(e.dataTransfer)) {
-                            e.preventDefault(); // ¡ESTO ES VITAL! Bloquea que el navegador abra el archivo en una pestaña nueva
-                            
-                            // Si es un archivo de Windows mostramos el icono de "Copiar", si es interno el de "Mover"
+                            e.preventDefault();
                             e.dataTransfer.dropEffect = transferHasFiles(e.dataTransfer) ? 'copy' : 'move';
                             row.classList.add('drag-over');
                         }
@@ -768,31 +770,26 @@ if (isset($_POST['nueva_carpeta'])) {
                         e.stopPropagation();
                         row.classList.remove('drag-over');
 
-                        // --- DETECTOR DE ARCHIVOS EXTERNOS (DESDE EL ORDENADOR) ---
                         if (e.dataTransfer.files.length > 0) {
                             const archivosEscritorio = e.dataTransfer.files;
                             const destDir = row.dataset.destdir !== undefined ? row.dataset.destdir : currentDir;
                             const destName = row.dataset.destname !== undefined ? row.dataset.destname : '';
-                            
-                            // Si se suelta sobre una carpeta, el destino es esa carpeta. Si no, la carpeta actual.
+
                             const rutaFinalSubida = destName ? (destDir ? destDir + '/' : '') + destName : currentDir;
-                            
+
                             const formData = new FormData();
-                            formData.append('archivo', archivosEscritorio[0]); // El archivo físico
-                            formData.append('directorio_destino', rutaFinalSubida); // La ruta actual
-                            
+                            formData.append('archivo', archivosEscritorio[0]);
+                            formData.append('directorio_destino', rutaFinalSubida);
+
                             try {
-                                // Enviamos el archivo por detrás a vuestro subir.php original
                                 await fetch('subir.php', { method: 'POST', body: formData });
-                                // Recargamos la interfaz en la misma carpeta para ver el archivo subido
                                 window.location.href = 'leer.php?dir=' + encodeURIComponent(currentDir);
                             } catch (err) {
                                 alert('Error al subir el archivo desde el ordenador.');
                             }
-                            return; // Cortamos la ejecución aquí
+                            return;
                         }
 
-                        // --- RESTO DEL CÓDIGO PARA MOVER INTERNAMENTE ---
                         try {
                             const data = JSON.parse(e.dataTransfer.getData('text/plain'));
                             if (!data || !data.name) return;

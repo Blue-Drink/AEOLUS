@@ -3,9 +3,9 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Cargar la librería Dotenv para leer el .env
-require 'vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// Cargar la librería Dotenv para leer el .env (Ruta corregida al backend)
+require '../../backend/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend');
 $dotenv->load();
 
 // Conexión a DB usando variables seguras
@@ -25,9 +25,10 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
     $token = trim($_GET['token']);
 
-    // Verificar token y expiración
-    $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > NOW()");
-    $stmt->bind_param("s", $token);
+    // Verificar token y expiración usando la hora de PHP para evitar problemas de Timezone
+    $ahora = date('Y-m-d H:i:s');
+    $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > ?");
+    $stmt->bind_param("ss", $token, $ahora);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -90,9 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['token'])) {
     } elseif ($clave !== $confirmar) {
         $message = "Las contraseñas no coinciden.";
     } else {
-        // Verificar token y expiración nuevamente por seguridad
-        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > NOW()");
-        $stmt->bind_param("s", $token);
+        // Verificar token y expiración nuevamente por seguridad usando la hora de PHP
+        $ahora = date('Y-m-d H:i:s');
+        $stmt = $conexion->prepare("SELECT id_usuario FROM usuario WHERE token=? AND token_expiracion > ?");
+        $stmt->bind_param("ss", $token, $ahora);
         $stmt->execute();
         $result = $stmt->get_result();
 
