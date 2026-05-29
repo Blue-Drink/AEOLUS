@@ -78,7 +78,7 @@ if ($stmt->execute()) {
         
         // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
         // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-        $enlace = "https://debian-aeolus.taildaa0bc.ts.net/AEOLUS/app/verificar.php?token=" . $token;
+        $enlace = "https://debian-aeolus.taildaa0bc.ts.net/verificar.php?token=" . $token;
 
         // --- CONFIGURACIÓN DE RED INTELIGENTE ---
 	// Usamos la URL del .env (la IP de Tailscale) para que el link funcione en cualquier sitio

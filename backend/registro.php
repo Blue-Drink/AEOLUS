@@ -75,22 +75,24 @@ if ($stmt->execute()) {
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8'; 
         $mail->Subject = 'Verifica tu cuenta en Aeolus Cloud';
-        
-        // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
-        // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-        $enlace = "https://debian-aeolus.taildaa0bc.ts.net/AEOLUS/app/verificar.php?token=" . $token;
 
         // --- CONFIGURACIÓN DE RED INTELIGENTE ---
 	// Usamos la URL del .env (la IP de Tailscale) para que el link funcione en cualquier sitio
-	$base_url = $_ENV['BASE_URL'] ?? "http://localhost:8080/AEOLUS/app";
-	$enlace = $base_url . "/verificar.php?token=" . $token;        
-        $mail->Body = "
+	$base_url = $_ENV['BASE_URL'] ?? "https://debian-aeolus.taildaa0bc.ts.net";
+	$enlace = $base_url . "/verificar.php?token=" . $token;   
+         
+    $mail->Body = "
             <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>
             <p>Gracias por registrarte. Para poder iniciar sesión, necesitas verificar tu correo electrónico haciendo clic en el siguiente enlace:</p>
-            <br>
-            <a href='$enlace' style='background-color: #4F46E5; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;'>Verificar mi cuenta</a>
-            <br><br>
-            <p>Si el botón no funciona, copia y pega esto en tu navegador: <br> $enlace</p>
+            
+            <div style='margin: 30px 0;'>
+                <a href='$enlace' style='background-color: #4F46E5; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>Verificar mi cuenta</a>
+            </div>
+            
+            <p style='margin-top: 30px; font-size: 14px;'>Si el botón no funciona, copia y pega esto en tu navegador:</p>
+            <p style='word-break: break-all; background-color: #f3f4f6; padding: 10px; border-radius: 5px; color: #4F46E5;'>
+                $enlace
+            </p>
         ";
 
         $mail->send();
