@@ -8,10 +8,9 @@ if ($_SERVER['SERVER_NAME'] === 'localhost') {
 // Cargar la librería PHPMailer y Dotenv
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-require 'vendor/autoload.php';
-
+require '../../backend/vendor/autoload.php';
 // Inicializar la caja fuerte (.env)
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../backend');
 $dotenv->load();
 
 // Sanitizar y validar email
@@ -109,8 +108,7 @@ try {
     $mail->Subject = 'Recuperación de contraseña - Aeolus Cloud';
     
     // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-    $reset_link = "http://localhost:8080/AEOLUS/app/reset.php?token=" . $token; 
-    
+    $reset_link = $_ENV['APP_URL'] . "/reset.php?token=" . $token; 
     // Diseño del correo Premium
     $mail->Body = "
         <h2>Hola, $nombre.</h2>
