@@ -82,6 +82,11 @@ El proyecto mantiene un flujo de despliegue continuo automatizado mediante Git. 
 * **Panel Principal:** Interfaz gráfica para la subida de ficheros (Drag & Drop o explorador), creación de carpetas y listado de documentos.
 * **Recuperación de Acceso:** Sistema de envío de tokens por correo electrónico con caducidad de 1 hora para el restablecimiento de credenciales de forma segura.
 
+<p align="center">
+  <img src="img/imagen1.jpeg">
+  <img src="img/imagen2.jpeg">
+</p>
+
 ## 🔒 9. Seguridad Implementada
 * **Aislamiento de Entorno:** Uso estricto de archivos `.env` (ignorados por Git) para evitar la filtración de credenciales.
 * **Hashes Criptográficos:** Contraseñas almacenadas usando `PASSWORD_DEFAULT` (Bcrypt) en PHP.
@@ -93,5 +98,20 @@ El proyecto mantiene un flujo de despliegue continuo automatizado mediante Git. 
 * Limitaciones de la versión actual:** Por motivos de gestión de infraestructura, la capacidad de almacenamiento se ha limitado de momento a 1 GB por usuario.
 * **Futuras ampliaciones (Roadmap):** Se plantea la implementación de un sistema de cuotas escalable. Esto permitirá ofrecer diferentes volúmenes de almacenamiento en función de distintos perfiles de usuario o planes de suscripción.
 
-## 📄 11. Licencia
+## 🌍 11. URL de Despliegue
+La aplicación está desplegada en producción a través de nuestra red VPN privada (Tailscale) para garantizar el aislamiento. 
+* **URL:** `https://debian-aeolus.taildaa0bc.ts.net`
+
+## 🎥 12. Vídeo Demostración
+* **Enlace al vídeo:** [https://youtube.com/tu-enlace-aqui] 
+*(Nota: El vídeo se actualizará aquí tras la grabación final para la defensa).*
+
+## 📚 13. Bibliografía y Recursos Técnicos Consultados
+* **Debian Project (2026):** *Debian 12 (Bookworm) Official Documentation*. Utilizado para el despliegue del sistema operativo bare-metal y la gestión de permisos. Recuperado de: https://www.debian.org/doc/
+* **MariaDB Foundation (2026):** *MariaDB Server Knowledge Base*. Consultado para el diseño relacional, configuración del motor de base de datos y hardening del servicio. Recuperado de: https://mariadb.com/kb/en/
+* **Tailscale Inc. (2026):** *Tailscale Documentation (WireGuard Mesh VPN)*. Referencia principal para la configuración de túneles P2P, evasión de CG-NAT y securización de la red. Recuperado de: https://tailscale.com/kb/
+* **The PHP Group (2026):** *PHP 8 Manual: Seguridad y variables de entorno*. Aplicado en la mitigación de inyecciones SQL (Consultas Preparadas) y cifrado de contraseñas. Recuperado de: https://www.php.net/manual/es/
+* **PHPMailer (2026):** *PHPMailer Official Repository*. Utilizado para la configuración de la pasarela de envíos SMTP mediante TLS. Recuperado de: https://github.com/PHPMailer/PHPMailer
+
+## 📄 14. Licencia
 Este proyecto es de carácter académico. Los recursos gráficos y código fuente se han desarrollado exclusivamente para la evaluación del proyecto intermodular de ASIR.
