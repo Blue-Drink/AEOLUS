@@ -103,8 +103,7 @@ La aplicación está desplegada en producción a través de nuestra red VPN priv
 * **URL:** `https://debian-aeolus.taildaa0bc.ts.net`
 
 ## 🎥 12. Vídeo Demostración
-* **Enlace al vídeo:** [https://youtube.com/tu-enlace-aqui] 
-*(Nota: El vídeo se actualizará aquí tras la grabación final para la defensa).*
+* **Enlace al vídeo:** [https://youtu.be/_4fhdJ3K9mA] 
 
 ## 📚 13. Bibliografía y Recursos Técnicos Consultados
 * **Debian Project (2026):** *Debian 12 (Bookworm) Official Documentation*. Utilizado para el despliegue del sistema operativo bare-metal y la gestión de permisos. Recuperado de: https://www.debian.org/doc/
