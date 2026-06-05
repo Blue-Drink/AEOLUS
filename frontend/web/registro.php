@@ -76,14 +76,8 @@ if ($stmt->execute()) {
         $mail->CharSet = 'UTF-8'; 
         $mail->Subject = 'Verifica tu cuenta en Aeolus Cloud';
         
-        // --- ⚠️ ATENCIÓN SYSADMIN ⚠️ ---
-        // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-        $enlace = "https://debian-aeolus.taildaa0bc.ts.net/verificar.php?token=" . $token;
-
-        // --- CONFIGURACIÓN DE RED INTELIGENTE ---
-	// Usamos la URL del .env (la IP de Tailscale) para que el link funcione en cualquier sitio
-	$base_url = $_ENV['BASE_URL'] ?? "http://localhost:8080/AEOLUS/app";
-	$enlace = $base_url . "/verificar.php?token=" . $token;        
+        // Inyectamos la URL base dinámicamente desde el archivo .env
+        $enlace = $_ENV['APP_URL'] . "/verificar.php?token=" . $token;
         $mail->Body = "
             <h2>¡Bienvenido a Aeolus Cloud, $n!</h2>
             <p>Gracias por registrarte. Para poder iniciar sesión, necesitas verificar tu correo electrónico haciendo clic en el siguiente enlace:</p>

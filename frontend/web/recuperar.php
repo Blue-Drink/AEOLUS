@@ -108,7 +108,7 @@ try {
     $mail->Subject = 'Recuperación de contraseña - Aeolus Cloud';
     
     // Enlace para XAMPP local. ¡Cambiar a 10.10.20.62 antes de subir a GitHub!
-    $reset_link = "http://debian.taildaa0bc.ts.net/reset.php?token=" . $token;    
+    $reset_link = $_ENV['APP_URL'] . "/reset.php?token=" . $token;   
     // Diseño del correo Premium
     $mail->Body = "
         <h2>Hola, $nombre.</h2>

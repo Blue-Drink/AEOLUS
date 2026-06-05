@@ -1,6 +1,8 @@
 # ☁️ AEOLUS Cloud
 
-![Aeolus Banner](./frontend/web/AEOLUS.png)
+<p align="center">
+  <img src="img/banner.png" alt="Banner Corporativo Aeolus Cloud" width="800">
+</p>
 
 Aeolus Cloud es una plataforma de almacenamiento y gestión de archivos en la nube privada, diseñada bajo los principios de seguridad, privacidad y alto rendimiento. Este proyecto se ha desarrollado como entregable final para el Ciclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR).
 
@@ -8,9 +10,9 @@ Aeolus Cloud es una plataforma de almacenamiento y gestión de archivos en la nu
 
 ## 👥 1. Autores del Proyecto
 El desarrollo, diseño e implementación de infraestructura ha sido llevado a cabo por el equipo:
-* **Patricia Ortiz**
-* **Pablo Porras**
-* **Isaac Rios**
+* **Patricia Ortiz Fuentes**
+* **Pablo Porras Vera**
+* **Isaac Rios Reyes**
 
 ## 🎯 2. Descripción y Objetivo
 El objetivo principal de Aeolus es proporcionar una alternativa privada y autogestionada a las nubes comerciales públicas. Permite a los usuarios registrados subir, descargar, gestionar y compartir archivos de forma segura dentro de una red privada virtual (VPN), garantizando que los datos nunca queden expuestos a la internet pública.
@@ -28,7 +30,9 @@ La arquitectura de la base de datos ha sido refactorizada y optimizada para la m
 1. **Usuario:** Almacena credenciales (hashes bcrypt), tokens de recuperación temporal y datos de verificación.
 2. **Archivos** *(Nota: cambia esta palabra si tu segunda tabla se llama de otra forma)*: Gestiona los metadatos del almacenamiento, enlazados mediante clave foránea al usuario propietario.
 
-*(Nota: Adjuntar aquí captura del diagrama E/R final).*
+<p align="center">
+  <img src="img/diagrama_er.png" alt="Diagrama Entidad-Relación">
+</p>
 
 ## ⚙️ 5. Requisitos Previos (Prerrequisitos)
 Para desplegar este proyecto en un entorno de desarrollo o producción, se necesita:
