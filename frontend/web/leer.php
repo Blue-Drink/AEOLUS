@@ -571,7 +571,7 @@ if (isset($_POST['nueva_carpeta'])) {
                         echo "</tr>";
                     }
 
-                    // --- NUEVO: ZONA DE ARRASTRE PERMANENTE AL FINAL DE LA TABLA ---
+                    // --- ZONA DE ARRASTRE PERMANENTE AL FINAL DE LA TABLA ---
                     echo "<tr>
                             <td colspan='3' style='text-align:center; color:var(--text-muted); padding: 35px; background-color: #f8fafc; border-top: 2px dashed #cbd5e1;'>
                                 <i class='fas fa-cloud-upload-alt' style='font-size: 1.8rem; color: var(--primary); margin-bottom: 12px; display: block; opacity: 0.8;'></i>
@@ -731,7 +731,7 @@ if (isset($_POST['nueva_carpeta'])) {
             document.getElementById('modalCompartir').style.display = 'none';
         }
 
-        // Drag & Drop Original de Isaac preservado al 100%
+        // Drag & Drop
         (function(){
             const currentDir = <?php echo json_encode($req); ?>;
 

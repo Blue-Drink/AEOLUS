@@ -24,12 +24,11 @@ if ($srcName === '') {
     exit;
 }
 
-$base = realpath(__DIR__ . '/uploads/' . $_SESSION['usuario']);
+$base = realpath(__DIR__ . '/backend/uploads/' . $_SESSION['usuario']);
 if ($base === false) {
     echo json_encode(['success' => false, 'error' => 'Directorio de usuario no encontrado']);
     exit;
 }
-
 
 $srcPath = $base . DIRECTORY_SEPARATOR . ($srcDir ? $srcDir . DIRECTORY_SEPARATOR : '') . $srcName;
 // Si destName está vacío significa que queremos mover al directorio indicado por destDir (sin añadir un subnombre)
