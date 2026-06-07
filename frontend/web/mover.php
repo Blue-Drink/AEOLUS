@@ -24,7 +24,7 @@ if ($srcName === '') {
     exit;
 }
 
-$base = realpath(__DIR__ . '/backend/uploads/' . $_SESSION['usuario']);
+$base = realpath(__DIR__ . '/../../backend/uploads/' . $_SESSION['usuario']);
 if ($base === false) {
     echo json_encode(['success' => false, 'error' => 'Directorio de usuario no encontrado']);
     exit;
