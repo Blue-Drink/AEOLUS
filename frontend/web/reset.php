@@ -126,7 +126,7 @@ $conexion->close();
                         <div class="input-group">
                             <label for="clave">Nueva Contraseña</label>
                             <div class="password-wrapper">
-                                <input type="password" id="clave" name="clave" placeholder="Mínimo 8 caracteres" required>
+                                <input type="password" id="clave" name="clave" placeholder="Mínimo 8 caracteres" required minlength="8">
                                 <span id="togglePassword" class="toggle-icon">👁️</span>
                             </div>
                         </div>
@@ -134,7 +134,7 @@ $conexion->close();
                         <div class="input-group">
                             <label for="confirmar">Confirmar Contraseña</label>
                             <div class="password-wrapper">
-                                <input type="password" id="confirmar" name="confirmar" placeholder="Repite tu contraseña" required>
+                                <input type="password" id="confirmar" name="confirmar" placeholder="Repite tu contraseña" required minlength="8">
                             </div>
                         </div>
 

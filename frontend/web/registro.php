@@ -17,6 +17,11 @@ $email = $_POST['email'];
 $n = $_POST['nombre'];
 $c = $_POST['clave'];
 
+if (strlen($c) < 8) {
+    echo "<script>alert('Aviso del Sistema: La contraseña debe tener al menos 8 caracteres.'); window.history.back();</script>";
+    exit();
+}
+
 // Encriptar clave y generar token seguro de 64 caracteres
 $clave_segura = password_hash($c, PASSWORD_DEFAULT);
 $token = bin2hex(random_bytes(32)); 
